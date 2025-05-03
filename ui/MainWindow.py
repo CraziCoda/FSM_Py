@@ -12,8 +12,3 @@ class MainWindow(QMainWindow):
 
         # menu bar
         Menu(self.menuBar(), self)
-        
-
-
-
-
