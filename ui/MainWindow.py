@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QFrame, QSplitter
+from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QFrame, QSplitter, QHBoxLayout
 from PyQt5.QtCore import QSize, Qt
 from ui.menu_bar.menu import Menu
+from ui.components.frames import TopFrame, BottomFrame
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -33,9 +34,20 @@ class MainWindow(QMainWindow):
 
         top_frame.setMinimumHeight(int(self.height() * 0.4))
         top_frame.setMaximumHeight(int(self.height() * 0.8))
+    
+        top_frame_layout = QHBoxLayout()
+        top_frame.setLayout(top_frame_layout)
+
+        bottom_frame_layout = QHBoxLayout()
+        bottom_frame.setLayout(bottom_frame_layout)
+
+        top_frame_layout.addWidget(TopFrame())
+        bottom_frame_layout.addWidget(BottomFrame())
 
         splitter = QSplitter(Qt.Vertical)
         splitter.addWidget(top_frame)
         splitter.addWidget(bottom_frame)
 
         central_widget.layout().addWidget(splitter)
+
+        self.show()
