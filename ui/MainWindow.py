@@ -19,26 +19,22 @@ class MainWindow(QMainWindow):
 
         # layout setup
         central_widget = QWidget()
-        central_widget.setLayout(QVBoxLayout())
+        vlayout = QVBoxLayout()
+        central_widget.setLayout(vlayout)
         self.setCentralWidget(central_widget)
 
         # add frames and splitter
         top_frame = QFrame()
         bottom_frame = QFrame()
 
-        top_frame.setFrameShape(QFrame.StyledPanel)
-        bottom_frame.setFrameShape(QFrame.StyledPanel)
-
-        top_frame.setGeometry(0, 0, self.width(), int(self.height() * 0.7))
-        bottom_frame.setGeometry(0, int(self.height() * 0.7), self.width(), int(self.height() * 0.3))
-
-        top_frame.setMinimumHeight(int(self.height() * 0.4))
-        top_frame.setMaximumHeight(int(self.height() * 0.8))
-    
         top_frame_layout = QHBoxLayout()
+        top_frame_layout.setContentsMargins(0, 0, 0, 0)
+        top_frame_layout.setSpacing(0)
         top_frame.setLayout(top_frame_layout)
 
         bottom_frame_layout = QHBoxLayout()
+        bottom_frame_layout.setContentsMargins(0, 0, 0, 0)
+        bottom_frame_layout.setSpacing(0)
         bottom_frame.setLayout(bottom_frame_layout)
 
         top_frame_layout.addWidget(TopFrame())
@@ -47,6 +43,8 @@ class MainWindow(QMainWindow):
         splitter = QSplitter(Qt.Vertical)
         splitter.addWidget(top_frame)
         splitter.addWidget(bottom_frame)
+        
+        splitter.setSizes([70, 30])
 
         central_widget.layout().addWidget(splitter)
 
