@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QHBoxLayout, QWidget, QFrame, QSplitter
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QFrame, QSplitter, QVBoxLayout
 from PyQt5.QtCore import Qt
+from ui.components.min_window import MinWindow
 
 
 class TopFrame(QWidget):
@@ -20,13 +21,19 @@ class TopFrame(QWidget):
         self.main = QFrame()
         self.right = QFrame()
 
-        self.left.setFrameShape(QFrame.StyledPanel)
         self.main.setFrameShape(QFrame.StyledPanel)
         self.right.setFrameShape(QFrame.StyledPanel)
 
         self.left.setMinimumWidth(int(self.width() * 0.25))
         self.main.setMinimumWidth(int(self.width() * 0.5))
         self.right.setMinimumWidth(int(self.width() * 0.25))
+
+
+        left_frame_layout = QVBoxLayout()
+        left_frame_layout.setContentsMargins(0, 0, 0, 0)
+        self.left.setLayout(left_frame_layout)
+        self.left.layout().addWidget(MinWindow("World"))
+        self.left.layout().addWidget(MinWindow("States"))
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.left)
