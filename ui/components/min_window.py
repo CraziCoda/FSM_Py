@@ -1,5 +1,4 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QFrame, QLabel, QSizePolicy
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QFrame, QLabel
 
 class MinWindow(QWidget):
     def __init__(self, name: str = "",content: QWidget = None,  bg_color: str = "#eeeeec"):

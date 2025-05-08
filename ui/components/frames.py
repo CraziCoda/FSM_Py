@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QFrame, QSplitter, QVBoxLayout
 from PyQt5.QtCore import Qt
 from ui.components.min_window import MinWindow
+from ui.components.world_win import WorldWin
 
 
 class TopFrame(QWidget):
@@ -31,7 +32,7 @@ class TopFrame(QWidget):
         self.left.setLayout(left_frame_layout)
 
         left_frame_splitter = QSplitter(Qt.Vertical)
-        left_frame_splitter.addWidget(MinWindow("World Manager"))
+        left_frame_splitter.addWidget(MinWindow("World Manager", WorldWin()))
         left_frame_splitter.addWidget(MinWindow("States"))
         left_frame_layout.addWidget(left_frame_splitter)
 
