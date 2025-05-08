@@ -20,8 +20,11 @@ class MainWindow(QMainWindow):
         # layout setup
         central_widget = QWidget()
         vlayout = QVBoxLayout()
+        vlayout.setContentsMargins(0, 0, 0, 0)
+        vlayout.setSpacing(12)
         central_widget.setLayout(vlayout)
         self.setCentralWidget(central_widget)
+        self.setStyleSheet("background-color: #ced1dc;")
 
         # add frames and splitter
         top_frame = QFrame()

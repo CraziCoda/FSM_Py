@@ -21,9 +21,6 @@ class TopFrame(QWidget):
         self.main = QFrame()
         self.right = QFrame()
 
-        self.main.setFrameShape(QFrame.StyledPanel)
-        self.right.setFrameShape(QFrame.StyledPanel)
-
         self.left.setMinimumWidth(int(self.width() * 0.25))
         self.main.setMinimumWidth(int(self.width() * 0.5))
         self.right.setMinimumWidth(int(self.width() * 0.25))
@@ -32,8 +29,20 @@ class TopFrame(QWidget):
         left_frame_layout = QVBoxLayout()
         left_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.left.setLayout(left_frame_layout)
-        self.left.layout().addWidget(MinWindow("World"))
-        self.left.layout().addWidget(MinWindow("States"))
+
+        left_frame_splitter = QSplitter(Qt.Vertical)
+        left_frame_splitter.addWidget(MinWindow("World Manager"))
+        left_frame_splitter.addWidget(MinWindow("States"))
+        left_frame_layout.addWidget(left_frame_splitter)
+
+        right_frame_layout = QVBoxLayout()
+        right_frame_layout.setContentsMargins(0, 0, 0, 0)
+        self.right.setLayout(right_frame_layout)
+
+        right_frame_splitter = QSplitter(Qt.Vertical)
+        right_frame_splitter.addWidget(MinWindow("Simulation"))
+        right_frame_splitter.addWidget(MinWindow(""))
+        right_frame_layout.addWidget(right_frame_splitter)
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.left)
@@ -60,11 +69,22 @@ class BottomFrame(QWidget):
         self.left = QFrame()
         self.right = QFrame()
 
-        self.left.setFrameShape(QFrame.StyledPanel)
-        self.right.setFrameShape(QFrame.StyledPanel)
+        left_layout = QVBoxLayout()
+        left_layout.setContentsMargins(0, 0, 0, 0)
+        self.left.setLayout(left_layout)
+
+        left_layout.addWidget(MinWindow("Log"))
+
+        right_layout = QVBoxLayout()
+        right_layout.setContentsMargins(0, 0, 0, 0)
+        self.right.setLayout(right_layout)
+
+        right_layout.addWidget(MinWindow("Transitions Table"))
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.left)
         splitter.addWidget(self.right)
+
+        splitter.setSizes([50, 50])
 
         self.layout().addWidget(splitter)
