@@ -15,14 +15,14 @@ class MinWindow(QWidget):
 
     def init_ui(self):
         vLayout = QVBoxLayout()
-        vLayout.setContentsMargins(0, 0, 0, 0)
+        vLayout.setContentsMargins(5, 5, 5, 5)
         vLayout.setSpacing(0)
         self.setLayout(vLayout)
 
         self.label = QLabel(self.name)
-        self.label.setSizePolicy(QLabel().sizePolicy())
+        self.label.setStyleSheet("margin: 5px 0; color: #888888; font-family: 'Segoe UI';")
 
         self.layout().addWidget(self.label, 0)
         self.layout().addWidget(self.main, 1)
 
-        self.setStyleSheet(f"background-color: {self.bg_color}; padding: 5px;")
+        self.setStyleSheet(f"background-color: {self.bg_color};")

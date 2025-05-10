@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QWidget, QFrame, QSplitter, QVBoxLayout
 from PyQt5.QtCore import Qt
 from ui.components.min_window import MinWindow
 from ui.components.world_win import WorldWin
+from ui.components.properties_win import PropertiesWin
 
 
 class TopFrame(QWidget):
@@ -22,6 +23,8 @@ class TopFrame(QWidget):
         self.main = QFrame()
         self.right = QFrame()
 
+        self.left.setStyleSheet("background-color: #eeeeec;")
+
         self.left.setMinimumWidth(int(self.width() * 0.25))
         self.main.setMinimumWidth(int(self.width() * 0.5))
         self.right.setMinimumWidth(int(self.width() * 0.25))
@@ -33,7 +36,8 @@ class TopFrame(QWidget):
 
         left_frame_splitter = QSplitter(Qt.Vertical)
         left_frame_splitter.addWidget(MinWindow("World Manager", WorldWin()))
-        left_frame_splitter.addWidget(MinWindow("States"))
+        props = [{"name": "prop1", "value": "value1"}, {"name": "prop2", "value": "value2"}]
+        left_frame_splitter.addWidget(MinWindow("Propeties", PropertiesWin(props=props)))
         left_frame_layout.addWidget(left_frame_splitter)
 
         right_frame_layout = QVBoxLayout()
