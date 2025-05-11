@@ -16,9 +16,11 @@ class PropertiesWin(QWidget):
 
         table = QTableWidget(len(self.props), 2)
         table.setHorizontalHeaderLabels(["Name", "Value"])
+        table.horizontalHeader().setStretchLastSection(True)
+        table.verticalHeader().setVisible(False)
 
         for i, prop in enumerate(self.props):
             table.setItem(i, 0, QTableWidgetItem(prop["name"]))
             table.setItem(i, 1, QTableWidgetItem(prop["value"]))
 
-        self.layout().addWidget(table)
+        self.layout().addWidget(table, 1)
