@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt
 from ui.components.min_window import MinWindow
 from ui.components.world_win import WorldWin
 from ui.components.properties_win import PropertiesWin
+from ui.components.simulation_win import SimulationWin
 
 
 class TopFrame(QWidget):
@@ -24,6 +25,7 @@ class TopFrame(QWidget):
         self.right = QFrame()
 
         self.left.setStyleSheet("background-color: #eeeeec;")
+        self.right.setStyleSheet("background-color: #eeeeec;")
 
         self.left.setMinimumWidth(int(self.width() * 0.25))
         self.main.setMinimumWidth(int(self.width() * 0.5))
@@ -45,8 +47,8 @@ class TopFrame(QWidget):
         self.right.setLayout(right_frame_layout)
 
         right_frame_splitter = QSplitter(Qt.Vertical)
-        right_frame_splitter.addWidget(MinWindow("Simulation"))
-        right_frame_splitter.addWidget(MinWindow(""))
+        right_frame_splitter.addWidget(MinWindow("Simulation", SimulationWin()))
+        right_frame_splitter.addWidget(MinWindow("Input"))
         right_frame_layout.addWidget(right_frame_splitter)
 
         splitter = QSplitter(Qt.Horizontal)
