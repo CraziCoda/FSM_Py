@@ -1,12 +1,27 @@
-from PyQt5.QtWidgets import QMenuBar
+from PyQt5.QtWidgets import QMenuBar, QFileDialog, QAction, QMainWindow
+from ui.styles.menu import menu_bar_style
 
 class Menu:
-    
-    def __init__(self, menu_bar: QMenuBar):
-        self.menu_bar = menu_bar
+    def __init__(self, parent: QMainWindow):
+        self.menu_bar = parent.menuBar()
+        self.parent = parent
 
-        file_menu = menu_bar.addMenu("File")
-        file_menu.addAction("New Machine")
-        file_menu.addAction("Open World")
-        file_menu.addAction("Exit")
+        # style menu bar
+        self.menu_bar.setStyleSheet(menu_bar_style)
+        self.menu_bar.setFixedHeight(30)
+
+        file_menu = self.menu_bar.addMenu("File")
+        
+        open_world_action = QAction("Open World", parent)
+        open_world_action.triggered.connect(lambda: self.open_world())
+        file_menu.addAction(open_world_action)
+
+        exit_action = QAction("Exit", parent)
+        exit_action.triggered.connect(parent.close)
+        file_menu.addAction(exit_action)
+
+
+    def open_world(self):
+        folder = QFileDialog.getExistingDirectory(self.parent, "Select World Folder")
+        print(folder)
 

@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(1200, 800))
 
         # menu bar
-        Menu(self.menuBar())
+        Menu(self)
 
         # layout setup
         central_widget = QWidget()
