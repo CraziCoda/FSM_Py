@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMenuBar, QFileDialog, QAction, QMainWindow
+from PyQt5.QtWidgets import QFileDialog, QAction, QMainWindow
 from ui.styles.menu import menu_bar_style
 
 class Menu:
