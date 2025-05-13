@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QFileDialog, QAction, QMainWindow
 from ui.styles.menu import menu_bar_style
-
+from actions.file import open_folder
 class Menu:
     def __init__(self, parent: QMainWindow):
         self.menu_bar = parent.menuBar()
@@ -13,7 +13,7 @@ class Menu:
         file_menu = self.menu_bar.addMenu("File")
         
         open_world_action = QAction("Open World", parent)
-        open_world_action.triggered.connect(lambda: self.open_world())
+        open_world_action.triggered.connect(lambda: self.open_folder(self.parent, self.parent.settings))
         file_menu.addAction(open_world_action)
 
         exit_action = QAction("Exit", parent)

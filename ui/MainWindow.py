@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QFrame, QSplitter, QHBoxLayout
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtCore import QSize, Qt, QSettings
 from ui.menu_bar.menu import Menu
 from ui.components.frames import TopFrame, BottomFrame
 
@@ -10,6 +10,8 @@ class MainWindow(QMainWindow):
         self.start_ui()
 
     def start_ui(self):
+        self.settings = QSettings("FSM", "FSM")
+
         # set window properties
         self.setWindowTitle("FSM")
         self.setMinimumSize(QSize(1200, 800))
