@@ -4,6 +4,7 @@ from ui.components.min_window import MinWindow
 from ui.components.world_win import WorldWin
 from ui.components.properties_win import PropertiesWin
 from ui.components.simulation_win import SimulationWin
+from ui.components.logs_win import LogsWin
 
 
 class TopFrame(QWidget):
@@ -76,11 +77,14 @@ class BottomFrame(QWidget):
         self.left = QFrame()
         self.right = QFrame()
 
+        self.left.setStyleSheet("background-color: #eeeeec;")
+        self.right.setStyleSheet("background-color: #eeeeec;")
+
         left_layout = QVBoxLayout()
         left_layout.setContentsMargins(0, 0, 0, 0)
         self.left.setLayout(left_layout)
 
-        left_layout.addWidget(MinWindow("Log"))
+        left_layout.addWidget(MinWindow("Logs", LogsWin()))
 
         right_layout = QVBoxLayout()
         right_layout.setContentsMargins(0, 0, 0, 0)
