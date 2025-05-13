@@ -1,10 +1,12 @@
-from PyQt5.QtWidgets import QMenuBar, QMainWindow, QAction
+from PyQt5.QtWidgets import QMenuBar
+
 class Menu:
-    menu_bar: QMenuBar
-    def __init__(self, menu_bar: QMenuBar, parent: QMainWindow | None = None) -> None:
+    
+    def __init__(self, menu_bar: QMenuBar):
         self.menu_bar = menu_bar
 
-        self.menu_bar.addMenu("File")
-        self.menu_bar.addMenu("Run")
-        self.menu_bar.addMenu("FSM")
-        self.menu_bar.addMenu("Help")
+        file_menu = menu_bar.addMenu("File")
+        file_menu.addAction("New Machine")
+        file_menu.addAction("Open World")
+        file_menu.addAction("Exit")
+
