@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QHBoxLayout, QWidget, QFrame, QSplitter, QVBoxLayout
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QFrame, QSplitter, QVBoxLayout, QApplication
 from PyQt5.QtCore import Qt
 from ui.components.min_window import MinWindow
 from ui.components.world_win import WorldWin

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton, QListWidget
 from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSettings
 from ui.styles.components import world_list_style
 
 class WorldWin(QWidget):
