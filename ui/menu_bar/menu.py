@@ -14,7 +14,7 @@ class Menu:
         file_menu = self.menu_bar.addMenu("File")
         
         open_world_action = QAction("Open World", parent)
-        open_world_action.triggered.connect(lambda: open_folder(self.parent, self.parent.settings))
+        open_world_action.triggered.connect(lambda: open_folder(self.parent))
         file_menu.addAction(open_world_action)
 
         exit_action = QAction("Exit", parent)

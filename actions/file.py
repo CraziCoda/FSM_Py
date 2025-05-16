@@ -1,7 +1,9 @@
 from PyQt5.QtWidgets import QFileDialog, QWidget
-from PyQt5.QtCore import QSettings
+from context.context import AppContext
 
-def open_folder(parent: QWidget, settings: QSettings):
+def open_folder(parent: QWidget):
+    settings = AppContext().settings
+
     folder = QFileDialog.getExistingDirectory(parent, "Select World Folder")
     if (folder == ""):
         return
