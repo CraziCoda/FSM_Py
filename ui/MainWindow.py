@@ -13,6 +13,7 @@ class MainWindow(QMainWindow):
     def start_ui(self):
         context = AppContext()
         context.settings = QSettings("FSM", "FSM")
+        context.main_window = self
 
         # set window properties
         self.setWindowTitle("FSM")

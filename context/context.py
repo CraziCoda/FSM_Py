@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QSettings
+from PyQt5.QtWidgets import QMainWindow
 
 class SingletonMeta(type):
     _instances = {}
@@ -11,4 +12,4 @@ class SingletonMeta(type):
 
 class AppContext(metaclass=SingletonMeta):
     settings: QSettings = None
-
+    main_window: QMainWindow = None

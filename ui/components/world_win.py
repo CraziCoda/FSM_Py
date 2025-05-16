@@ -3,6 +3,7 @@ from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtCore import Qt, QSettings
 from ui.styles.components import world_list_style
 from context.context import AppContext
+from ui.dialogs.new_machine import NewMachineDialog
 
 class WorldWin(QWidget):
     def __init__(self):
@@ -24,6 +25,7 @@ class WorldWin(QWidget):
 
         new_machine_button = QPushButton()
         new_machine_button.setIcon(QIcon("assets/icons/add.png"))
+        new_machine_button.clicked.connect(lambda: self.create_new_machine())
 
         delete_machine_button = QPushButton()
         delete_machine_button.setIcon(QIcon("assets/icons/delete.png"))
@@ -65,4 +67,12 @@ class WorldWin(QWidget):
         self.layout().addWidget(icons_frame, 0)
         self.layout().addWidget(world_name, 0)
         self.layout().addWidget(scroll, 1)
+
+    def create_new_machine(self):
+        main_window = AppContext().main_window
+
+        dialog = NewMachineDialog(main_window)
+        dialog.exec()
+        
+        print("create new machine")
         
