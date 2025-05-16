@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QFrame, QSplitter
 from PyQt5.QtCore import QSize, Qt, QSettings
 from ui.menu_bar.menu import Menu
 from ui.components.frames import TopFrame, BottomFrame
+from context.context import AppContext
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -10,7 +11,8 @@ class MainWindow(QMainWindow):
         self.start_ui()
 
     def start_ui(self):
-        self.settings = QSettings("FSM", "FSM")
+        context = AppContext()
+        context.settings = QSettings("FSM", "FSM")
 
         # set window properties
         self.setWindowTitle("FSM")
