@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QFrame, QSplitter
 from PyQt5.QtCore import QSize, Qt, QSettings
 from ui.menu_bar.menu import Menu
 from ui.components.frames import TopFrame, BottomFrame
+from PyQt5.QtCore import QFileSystemWatcher
 from context.context import AppContext
 
 class MainWindow(QMainWindow):
@@ -14,6 +15,9 @@ class MainWindow(QMainWindow):
         context = AppContext()
         context.settings = QSettings("FSM", "FSM")
         context.main_window = self
+
+        context.world_watcher = QFileSystemWatcher()
+        context.world_watcher.directoryChanged.connect(lambda: print("directory changed"))
 
         # set window properties
         self.setWindowTitle("FSM")

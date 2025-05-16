@@ -73,6 +73,4 @@ class WorldWin(QWidget):
 
         dialog = NewMachineDialog(main_window)
         dialog.exec()
-        
-        print("create new machine")
-        
+                
