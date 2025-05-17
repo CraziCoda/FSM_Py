@@ -19,4 +19,8 @@ def open_folder(parent: QWidget):
 
 def get_machines_in_world():
     folder = AppContext().settings.value("world_folder")
-    AppContext().set_machines(os.listdir(folder))
+    _machines = []
+    for file in os.listdir(folder):
+        if file.endswith(".fsm"):
+            _machines.append(file)
+    AppContext().set_machines(_machines)

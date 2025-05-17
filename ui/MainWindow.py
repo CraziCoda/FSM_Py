@@ -24,7 +24,12 @@ class MainWindow(QMainWindow):
         if context.settings.value("world_folder") != None:
             context.world_watcher.addPath(context.settings.value("world_folder"))
 
-        context.set_machines(os.listdir(context.settings.value("world_folder")))
+        _machines = os.listdir(context.settings.value("world_folder"))
+        _selected_machines = []
+        for file in _machines:
+            if file.endswith(".fsm"):
+                _selected_machines.append(file)
+        context.set_machines(_selected_machines)
 
 
         # set window properties

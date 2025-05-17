@@ -1,9 +1,11 @@
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton, QListWidget
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton, QListWidget, QMessageBox
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtCore import Qt, QSettings
 from ui.styles.components import world_list_style
 from context.context import AppContext
 from ui.dialogs.new_machine import NewMachineDialog
+from actions.file import open_folder
+import os
 
 class WorldWin(QWidget):
     def __init__(self):
@@ -29,12 +31,15 @@ class WorldWin(QWidget):
 
         delete_machine_button = QPushButton()
         delete_machine_button.setIcon(QIcon("assets/icons/delete.png"))
+        delete_machine_button.clicked.connect(lambda: self.delete_machine())
 
         open_world_button = QPushButton()
         open_world_button.setIcon(QIcon("assets/icons/open-folder.png"))
+        open_world_button.clicked.connect(lambda: open_folder(self))
 
         clear_world_button = QPushButton()
         clear_world_button.setIcon(QIcon("assets/icons/broom.png"))
+        clear_world_button.clicked.connect(lambda: self.clear_world())
 
         icons_frame_layout.addWidget(new_machine_button)
         icons_frame_layout.addWidget(delete_machine_button)
@@ -79,5 +84,22 @@ class WorldWin(QWidget):
     def update_world_list(self):
         self.world_list.clear()
         self.world_list.addItems(AppContext().machines)
+
+    
+    def delete_machine(self):
+        _machine = self.world_list.currentItem().text()
+        path = os.path.join(AppContext().settings.value("world_folder"), _machine)
+        os.remove(path)
+
+    def clear_world(self):
+        reply = QMessageBox.question(AppContext().main_window, "Clear World", "Are you sure you want to clear the world?", QMessageBox.Yes | QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        
+        folder = AppContext().settings.value("world_folder")
+        for file in os.listdir(folder):
+            if file.endswith(".fsm"):
+                path = os.path.join(folder, file)
+                os.remove(path)
         
                 
