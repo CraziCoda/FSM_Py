@@ -23,6 +23,5 @@ class Menu:
 
 
     def open_world(self):
-        folder = QFileDialog.getExistingDirectory(self.parent, "Select World Folder")
-        print(folder)
+        QFileDialog.getExistingDirectory(self.parent, "Select World Folder")
 

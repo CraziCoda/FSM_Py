@@ -5,6 +5,7 @@ from ui.components.frames import TopFrame, BottomFrame
 from PyQt5.QtCore import QFileSystemWatcher
 from context.context import AppContext
 from actions.file import get_machines_in_world
+import os
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -19,6 +20,12 @@ class MainWindow(QMainWindow):
 
         context.world_watcher = QFileSystemWatcher()
         context.world_watcher.directoryChanged.connect(lambda: get_machines_in_world())
+
+        if context.settings.value("world_folder") != None:
+            context.world_watcher.addPath(context.settings.value("world_folder"))
+
+        context.set_machines(os.listdir(context.settings.value("world_folder")))
+
 
         # set window properties
         self.setWindowTitle("FSM")

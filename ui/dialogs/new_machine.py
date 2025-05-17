@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QLineEdit, QPushButton, QLabel, QComboBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
+from context.context import AppContext
+import os
 
 
 class NewMachineDialog(QDialog):
@@ -36,9 +38,33 @@ class NewMachineDialog(QDialog):
         self.layout().addLayout(gridLayout, 1)
         
 
-        self.label = QPushButton("Create")
-        self.label.setStyleSheet("margin: 5px 0; color: #888888; font-family: 'Segoe UI';")
+        self.create_button = QPushButton("Create")
+        self.create_button.setStyleSheet("margin: 5px 0; color: #888888; font-family: 'Segoe UI';")
 
-        self.layout().addWidget(self.label, 0)
+        self.create_button.clicked.connect(lambda: self.create_new_machine())
+
+        self.layout().addWidget(self.create_button, 2)
 
         self.setStyleSheet("background-color: #eeeeec;")
+
+    def create_new_machine(self):
+        name = self.name_input.text() + ".fsm"
+        type = self.type_input.currentText()
+
+        if name == "":
+            return
+        
+        world = AppContext().settings.value("world_folder")
+        
+        try:
+            path = os.path.join(world, name)
+            if os.path.exists(path):
+                return
+            with open(path, "w") as f:
+                f.write(type)
+        except:
+            return
+        
+
+
+        self.accept()
