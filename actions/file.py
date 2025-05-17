@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QFileDialog, QWidget
 from context.context import AppContext
+import os
 
 def open_folder(parent: QWidget):
     settings = AppContext().settings
@@ -14,5 +15,8 @@ def open_folder(parent: QWidget):
         world_watcher.removePath(path)
     world_watcher.addPath(folder)
 
+    get_machines_in_world()
+
 def get_machines_in_world():
-    pass
+    folder = AppContext().settings.value("world_folder")
+    AppContext().set_machines(os.listdir(folder))

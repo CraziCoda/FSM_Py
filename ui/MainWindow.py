@@ -4,6 +4,7 @@ from ui.menu_bar.menu import Menu
 from ui.components.frames import TopFrame, BottomFrame
 from PyQt5.QtCore import QFileSystemWatcher
 from context.context import AppContext
+from actions.file import get_machines_in_world
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -17,7 +18,7 @@ class MainWindow(QMainWindow):
         context.main_window = self
 
         context.world_watcher = QFileSystemWatcher()
-        context.world_watcher.directoryChanged.connect(lambda: print("directory changed"))
+        context.world_watcher.directoryChanged.connect(lambda: get_machines_in_world())
 
         # set window properties
         self.setWindowTitle("FSM")

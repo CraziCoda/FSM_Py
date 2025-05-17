@@ -45,21 +45,23 @@ class WorldWin(QWidget):
         world_name = QLabel("Just a world")
         world_name.setStyleSheet("font-weight: 500; font-family: 'Segoe UI'; font-size: 14px; border: 1px solid #aaaacc; border-bottom: 1px groove #dddddd; background-color: #ffffff; padding: 5px;")
 
-        world_list = QListWidget()
-        world_list_layout = QVBoxLayout()
-        world_list_layout.setContentsMargins(0, 0, 0, 0)
-        world_list_layout.setSpacing(0)
-        world_list.setLayout(world_list_layout)
+        self.world_list = QListWidget()
+        self.world_list_layout = QVBoxLayout()
+        self.world_list_layout.setContentsMargins(0, 0, 0, 0)
+        self.world_list_layout.setSpacing(0)
+        self.world_list.setLayout(self.world_list_layout)
 
-        worlds_sample = ["Microwave", "Traffic Light", "Washing Machine", "Light Switch", "Door"]
-        world_list.addItems(worlds_sample)
+        AppContext().set_handler("machines", self.update_world_list)
 
-        world_list.setStyleSheet(world_list_style)
+        worlds_sample = AppContext().machines
+        self.world_list.addItems(worlds_sample)
 
-        world_list_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.world_list.setStyleSheet(world_list_style)
+
+        self.world_list_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         scroll = QScrollArea()
-        scroll.setWidget(world_list)
+        scroll.setWidget(self.world_list)
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("background-color: #ffffff;")
 
@@ -73,4 +75,9 @@ class WorldWin(QWidget):
 
         dialog = NewMachineDialog(main_window)
         dialog.exec()
+
+    def update_world_list(self):
+        self.world_list.clear()
+        self.world_list.addItems(AppContext().machines)
+        
                 
