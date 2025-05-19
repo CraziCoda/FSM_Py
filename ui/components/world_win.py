@@ -47,7 +47,14 @@ class WorldWin(QWidget):
         icons_frame_layout.addWidget(open_world_button)
         icons_frame_layout.addWidget(clear_world_button)
 
-        world_name = QLabel("Just a world")
+        world_name: str | None = AppContext().settings.value("world_folder")
+
+        if world_name == None:
+            world_name = "Open a world"
+        else:
+            world_name = os.path.basename(world_name)
+
+        world_name = QLabel(world_name)
         world_name.setStyleSheet("font-weight: 500; font-family: 'Segoe UI'; font-size: 14px; border: 1px solid #aaaacc; border-bottom: 1px groove #dddddd; background-color: #ffffff; padding: 5px;")
 
         self.world_list = QListWidget()
@@ -57,6 +64,7 @@ class WorldWin(QWidget):
         self.world_list.setLayout(self.world_list_layout)
 
         AppContext().set_handler("machines", self.update_world_list)
+        AppContext().set_handler("world_name", lambda: world_name.setText(AppContext().world_name))
 
         worlds_sample = AppContext().machines
         self.world_list.addItems(worlds_sample)

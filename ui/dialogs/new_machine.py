@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QLineEdit, QPushButton, QLabel, QComboBox
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QLineEdit, QPushButton, QLabel, QComboBox, QMessageBox
+import json
 from context.context import AppContext
 import os
+from context.defaults import DEFAULT_MACHINE
 
 
 class NewMachineDialog(QDialog):
@@ -52,19 +52,26 @@ class NewMachineDialog(QDialog):
         type = self.type_input.currentText()
 
         if name == "":
+            QMessageBox.critical(self, "Error", "Please enter a name")
             return
+        
+        default = DEFAULT_MACHINE.copy()
+        default["name"] = name
+        default["type"] = type
+
+        print(default)
         
         world = AppContext().settings.value("world_folder")
         
         try:
             path = os.path.join(world, name)
             if os.path.exists(path):
+                QMessageBox.critical(self, "Error", "Machine already exists")
                 return
             with open(path, "w") as f:
-                f.write(type)
+                f.write(json.dumps(default))
         except:
+            QMessageBox.critical(self, "Error", "Error creating machine")
             return
-        
-
 
         self.accept()

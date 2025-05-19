@@ -15,6 +15,7 @@ def open_folder(parent: QWidget):
         world_watcher.removePath(path)
     world_watcher.addPath(folder)
 
+    AppContext().set_world_name(os.path.basename(folder))
     get_machines_in_world()
 
 def get_machines_in_world():

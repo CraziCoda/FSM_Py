@@ -19,7 +19,9 @@ class AppContext(metaclass=SingletonMeta):
     main_window: QMainWindow = None
     world_watcher: QFileSystemWatcher = None
     machines: list[str] = []
+    world_name: str = ""
     _machines_update_handler: Callable[[], None] = None
+    _world_name_update_handler: Callable[[], None] = None
 
 
     def set_machines(self, machines: list[str]):
@@ -31,3 +33,13 @@ class AppContext(metaclass=SingletonMeta):
     def set_handler(self, variable: str, handler: Callable[[], None]):
         if variable == "machines":
             self._machines_update_handler = handler
+        if variable == "world_name":
+            self._world_name_update_handler = handler
+
+    def set_world_name(self, name: str):
+        self.world_name = name
+        self.settings.setValue("world_name", name)
+
+        if self._world_name_update_handler:
+            self._world_name_update_handler()
+
