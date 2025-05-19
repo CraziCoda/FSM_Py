@@ -5,6 +5,7 @@ from ui.components.world_win import WorldWin
 from ui.components.properties_win import PropertiesWin
 from ui.components.simulation_win import SimulationWin
 from ui.components.logs_win import LogsWin
+from ui.components.editor import Editor
 
 
 class TopFrame(QWidget):
@@ -42,6 +43,14 @@ class TopFrame(QWidget):
         props = [{"name": "prop1", "value": "value1"}, {"name": "prop2", "value": "value2"}]
         left_frame_splitter.addWidget(MinWindow("Propeties", PropertiesWin(props=props)))
         left_frame_layout.addWidget(left_frame_splitter)
+
+
+        main_frame_layout = QVBoxLayout()
+        main_frame_layout.setContentsMargins(0, 0, 0, 0)
+        self.main.setLayout(main_frame_layout)
+
+        main_frame_layout.addWidget(Editor())
+
 
         right_frame_layout = QVBoxLayout()
         right_frame_layout.setContentsMargins(0, 0, 0, 0)
