@@ -47,10 +47,14 @@ class TopFrame(QWidget):
 
         main_frame_layout = QHBoxLayout()
         main_frame_layout.setContentsMargins(0, 0, 0, 0)
+        main_frame_layout.setSpacing(0)
         self.main.setLayout(main_frame_layout)
 
         main_frame_layout.addWidget(ToolBar(), 0)
         main_frame_layout.addWidget(Editor(), 1)
+
+        self.main.setStyleSheet("background-color: red; ")
+        main_frame_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
 
         right_frame_layout = QVBoxLayout()
