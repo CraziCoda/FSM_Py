@@ -34,8 +34,8 @@ class ToolBar(QWidget):
             "assets/tools/plus.png",
             "assets/tools/nodes.png",
             "assets/tools/scissors.png",
-            "assets/tools/tick-mark.png",
-            "assets/tools/delete.png",
+            "assets/tools/check-mark.png",
+            "assets/tools/recycle-bin.png",
             "assets/tools/loupe.png",
         ]
 
