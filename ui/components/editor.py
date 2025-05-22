@@ -12,7 +12,7 @@ class Editor(QGraphicsView):
         self.setScene(self.scene)
 
         self.setRenderHint(QPainter.RenderHint.Antialiasing)
-        self.setStyleSheet("background-color: white;")
+        self.setStyleSheet("background-color: #dddddd;")
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
