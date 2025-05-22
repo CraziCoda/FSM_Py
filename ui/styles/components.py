@@ -18,3 +18,22 @@ QListWidget::item:selected {
     margin: 0;
 }
 """
+
+tools_list_style = """
+QListWidget {
+    padding: 0;
+    margin: 0;
+}
+QListWidget::item {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #cccccc;
+    margin-bottom: 10px;
+}
+QListWidget::item:selected {
+    background-color: #aaaaaf;
+    border-radius: 4px;       
+    padding: 2px 0;
+    width: 100%;
+}
+"""

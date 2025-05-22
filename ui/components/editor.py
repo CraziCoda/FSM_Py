@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QWidget, QVBoxLayout, QPushButton, QListWidget, QListWidgetItem
 from PyQt5.QtGui import QPainter, QPen, QIcon
 from PyQt5.QtCore import Qt, QSize
+from ui.styles.components import tools_list_style
 
 
 class Editor(QGraphicsView):
@@ -31,12 +32,22 @@ class ToolBar(QWidget):
         vLayout.setSpacing(0)
 
         icons = [
+            "assets/tools/cursor.png",
             "assets/tools/plus.png",
             "assets/tools/nodes.png",
-            "assets/tools/scissors.png",
             "assets/tools/check-mark.png",
+            "assets/tools/scissors.png",
             "assets/tools/recycle-bin.png",
             "assets/tools/loupe.png",
+        ]
+        tooltips = [
+            "Move",
+            "Add State",
+            "Add Transition",
+            "Accept State",
+            "Remove Transition",
+            "Remove State",
+            "Zoom"
         ]
 
         self.tools_list = QListWidget()
@@ -54,11 +65,14 @@ class ToolBar(QWidget):
         for i, icon in enumerate(icons):
             item = QListWidgetItem()
             item.setIcon(QIcon(icon))
+            item.setToolTip(tooltips[i])
             self.tools_list.addItem(item)
             if i == 0:
                 self.tools_list.setCurrentItem(item)
 
         vLayout.addWidget(self.tools_list, 0)
+
+        self.tools_list.setStyleSheet(tools_list_style)
 
         self.setStyleSheet("background-color: #ffffff; padding: 5px 0;")
         vLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
