@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton, QListWidget, QMessageBox, QToolButton
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton, QListWidget, QMessageBox, QToolButton, QMenu
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtCore import Qt, QSettings, QSize
 from ui.styles.components import *
@@ -70,8 +70,21 @@ class WorldWin(QWidget):
         new_machine_button.clicked.connect(lambda: self.create_new_machine())
         new_machine_button.setStyleSheet(new_machine_button_style)
 
+        menu_button = QToolButton()
+        menu_button.setIcon(QIcon("assets/icons/dots.png"))
+        menu_button.setAutoRaise(True)
+        menu_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        menu_button.setIconSize(QSize(20, 20))
+        menu_button.setStyleSheet(world_menu_button_style)
+
+        menu = QMenu()
+        menu.addAction("Open World", lambda: open_folder(self))
+        menu.addAction("Clear World", lambda: self.clear_world())
+        menu_button.setMenu(menu)
+
         hLayout.addWidget(world_name, 1)
-        hLayout.addWidget(new_machine_button, 1)
+        hLayout.addWidget(new_machine_button, 0)
+        hLayout.addWidget(menu_button, 0)
         hLayout.setAlignment(Qt.AlignmentFlag.AlignJustify)
 
         self.world_list = QListWidget()
@@ -93,10 +106,9 @@ class WorldWin(QWidget):
         scroll = QScrollArea()
         scroll.setWidget(self.world_list)
         scroll.setWidgetResizable(True)
-        scroll.setStyleSheet("background-color: #ffffff;")
+        scroll.setStyleSheet(world_list_scroll_style)
 
 
-        self.layout().addWidget(icons_frame, 0)
         self.layout().addWidget(name_frame, 0)
         self.layout().addWidget(scroll, 1)
 
