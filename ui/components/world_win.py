@@ -69,6 +69,7 @@ class WorldWin(QWidget):
         new_machine_button.setIconSize(QSize(20, 20))
         new_machine_button.clicked.connect(lambda: self.create_new_machine())
         new_machine_button.setStyleSheet(new_machine_button_style)
+        new_machine_button.setToolTip("Create a new machine")
 
         menu_button = QToolButton()
         menu_button.setIcon(QIcon("assets/icons/dots.png"))
