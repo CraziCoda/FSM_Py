@@ -37,3 +37,27 @@ QListWidget::item:selected {
     width: 100%;
 }
 """
+
+world_name_style = """
+QLabel {
+   font-weight: 500; 
+   font-family: 'Segoe UI'; 
+   font-size: 16px; 
+   border: 1px solid #aaaacc; 
+   border-bottom: none;
+   border-right: none;
+   background-color: #ffffff; 
+   padding: 2px;
+}
+"""
+
+new_machine_button_style = """
+QToolButton {
+    background-color: #ffffff;
+    border: 1px solid #aaaacc;
+    border-bottom: none;
+    border-left: none;
+    padding: 2px;
+    padding-right: 5px;
+}
+"""

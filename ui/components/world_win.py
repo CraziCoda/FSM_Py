@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton, QListWidget, QMessageBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton, QListWidget, QMessageBox, QToolButton
 from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtCore import Qt, QSettings
-from ui.styles.components import world_list_style
+from PyQt5.QtCore import Qt, QSettings, QSize
+from ui.styles.components import *
 from context.context import AppContext
 from ui.dialogs.new_machine import NewMachineDialog
 from actions.file import open_folder
@@ -54,8 +54,25 @@ class WorldWin(QWidget):
         else:
             world_name = os.path.basename(world_name)
 
+        name_frame = QFrame()
+        hLayout = QHBoxLayout()
+        hLayout.setContentsMargins(0, 0, 0, 0)
+        hLayout.setSpacing(0)
+        name_frame.setLayout(hLayout)
+
         world_name = QLabel(world_name)
-        world_name.setStyleSheet("font-weight: 500; font-family: 'Segoe UI'; font-size: 14px; border: 1px solid #aaaacc; border-bottom: 1px groove #dddddd; background-color: #ffffff; padding: 5px;")
+        world_name.setStyleSheet(world_name_style)
+
+        new_machine_button = QToolButton()
+        new_machine_button.setIcon(QIcon("assets/icons/plus.png"))
+        new_machine_button.setAutoRaise(True)
+        new_machine_button.setIconSize(QSize(20, 20))
+        new_machine_button.clicked.connect(lambda: self.create_new_machine())
+        new_machine_button.setStyleSheet(new_machine_button_style)
+
+        hLayout.addWidget(world_name, 1)
+        hLayout.addWidget(new_machine_button, 1)
+        hLayout.setAlignment(Qt.AlignmentFlag.AlignJustify)
 
         self.world_list = QListWidget()
         self.world_list_layout = QVBoxLayout()
@@ -80,7 +97,7 @@ class WorldWin(QWidget):
 
 
         self.layout().addWidget(icons_frame, 0)
-        self.layout().addWidget(world_name, 0)
+        self.layout().addWidget(name_frame, 0)
         self.layout().addWidget(scroll, 1)
 
     def create_new_machine(self):
