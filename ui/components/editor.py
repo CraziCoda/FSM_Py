@@ -19,7 +19,7 @@ class Editor(QGraphicsView):
 
         self.add_dot_grid()
 
-        self.setCursor(Qt.CursorShape.OpenHandCursor)
+        AppContext().set_handler("selected_tool", lambda: self.change_cursor())
 
     def add_dot(self, x, y, radius=2, color="#000000"):
         dot = QGraphicsEllipseItem(
@@ -40,20 +40,27 @@ class Editor(QGraphicsView):
         state.setBrush(QBrush(QColor("#4cadfc")))
         self.scene.addItem(state)
 
+    def change_cursor(self):
+        selected_tool = AppContext().selected_tool
+
+        if selected_tool == "move":
+            self.setCursor(Qt.CursorShape.OpenHandCursor)
+        
+        if selected_tool == "add_state":
+            self.setCursor(Qt.CursorShape.CrossCursor)
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
 
-        if event.button() == Qt.MouseButton.LeftButton and AppContext.editor["selected_tool"] == "add_state":
+        if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "add_state":
             self.add_state(pos.x(), pos.y())
 
-        if event.button() == Qt.MouseButton.LeftButton and AppContext.editor["selected_tool"] == "move":
+        if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "move":
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            self.setCursor(Qt.CursorShape.OpenHandCursor)
-
+            self.change_cursor()
 
 
 class ToolBar(QWidget):
@@ -118,20 +125,20 @@ class ToolBar(QWidget):
             tool_selected = item.toolTip()
 
             if tool_selected == "Move":
-                AppContext.editor["selected_tool"] = "move"
+                AppContext().set_selected_tool("move")
             elif tool_selected == "Add State":
-                AppContext.editor["selected_tool"] = "add_state"
+                AppContext().set_selected_tool("add_state")
             elif tool_selected == "Add Transition":
-                AppContext.editor["selected_tool"] = "add_transition"
+                AppContext().set_selected_tool("add_transition")
             elif tool_selected == "Accept State":
-                AppContext.editor["selected_tool"] = "accept_state"
+                AppContext().set_selected_tool("accept_state")
             elif tool_selected == "Remove Transition":
-                AppContext.editor["selected_tool"] = "remove_transition"
+                AppContext().set_selected_tool("remove_transition")
             elif tool_selected == "Remove State":
-                AppContext.editor["selected_tool"] = "remove_state"
+                AppContext().set_selected_tool("remove_state")
             elif tool_selected == "Zoom":
-                AppContext.editor["selected_tool"] = "zoom"
+                AppContext().set_selected_tool("zoom")
             else:
-                AppContext.editor["selected_tool"] = "move"
-
+                AppContext().set_selected_tool("move")
+            
         self.tools_list.itemClicked.connect(handle_item_click)

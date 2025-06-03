@@ -21,14 +21,12 @@ class AppContext(metaclass=SingletonMeta):
     world_name: str = ""
     _machines_update_handler: Callable[[], None] = None
     _world_name_update_handler: Callable[[], None] = None
+    _tool_change_handler: Callable[[], None] = None
     machine_details = {
         "states": [],
         "transitions": [],
     }
-    editor = {
-        "selected_machine": None,
-        "selected_tool": "move"
-    }
+    selected_tool = "move"
 
     def set_machines(self, machines: list[str]):
         self.machines = machines
@@ -40,6 +38,8 @@ class AppContext(metaclass=SingletonMeta):
             self._machines_update_handler = handler
         if variable == "world_name":
             self._world_name_update_handler = handler
+        if variable == "selected_tool":
+            self._tool_change_handler = handler
 
     def set_world_name(self, name: str):
         self.world_name = name
@@ -47,3 +47,9 @@ class AppContext(metaclass=SingletonMeta):
 
         if self._world_name_update_handler:
             self._world_name_update_handler()
+
+    def set_selected_tool(self, tool: str):
+        self.selected_tool = tool
+
+        if self._tool_change_handler:
+            self._tool_change_handler()
