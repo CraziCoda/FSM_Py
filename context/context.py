@@ -4,7 +4,6 @@ from PyQt5.QtCore import QFileSystemWatcher
 from typing import Callable
 
 
-
 class SingletonMeta(type):
     _instances = {}
 
@@ -12,7 +11,7 @@ class SingletonMeta(type):
         if cls not in cls._instances:
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
-    
+
 
 class AppContext(metaclass=SingletonMeta):
     settings: QSettings = None
@@ -22,13 +21,19 @@ class AppContext(metaclass=SingletonMeta):
     world_name: str = ""
     _machines_update_handler: Callable[[], None] = None
     _world_name_update_handler: Callable[[], None] = None
-
+    machine_details = {
+        "states": [],
+        "transitions": [],
+    }
+    editor = {
+        "selected_machine": None,
+        "selected_tool": "move"
+    }
 
     def set_machines(self, machines: list[str]):
         self.machines = machines
         if self._machines_update_handler:
             self._machines_update_handler()
-
 
     def set_handler(self, variable: str, handler: Callable[[], None]):
         if variable == "machines":
@@ -42,4 +47,3 @@ class AppContext(metaclass=SingletonMeta):
 
         if self._world_name_update_handler:
             self._world_name_update_handler()
-
