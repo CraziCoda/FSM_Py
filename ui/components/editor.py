@@ -1,11 +1,17 @@
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QWidget, QVBoxLayout, QGraphicsEllipseItem, QListWidget, QListWidgetItem
-from PyQt5.QtGui import QPainter, QPen, QIcon, QBrush, QColor
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QWidget, QVBoxLayout, QGraphicsEllipseItem, QListWidget, QListWidgetItem, QGraphicsItem
+from PyQt5.QtGui import QPainter, QPen, QIcon, QBrush, QColor, QTransform
+from PyQt5.QtCore import Qt, QSize, QPoint
 from ui.styles.components import tools_list_style
 from context.context import AppContext
+from context.machine import *
 
 
 class Editor(QGraphicsView):
+    current_machine: Machine = Machine()
+    dragged_item: QGraphicsItem = None
+    last_pos_dragged_item: QPoint = None
+    drag_offset: QPoint = None
+
     def __init__(self):
         super().__init__()
 
@@ -35,10 +41,14 @@ class Editor(QGraphicsView):
 
     def add_state(self, x, y):
         radius = 50
-        state = QGraphicsEllipseItem(
+        item = QGraphicsEllipseItem(
             x - radius, y - radius, radius * 2, radius * 2)
-        state.setBrush(QBrush(QColor("#4cadfc")))
-        self.scene.addItem(state)
+        item.setBrush(QBrush(QColor("#4cadfc")))
+        self.scene.addItem(item)
+
+        state = State(f"q{len(self.current_machine.states)}", "moore", [x, y], True)
+        state.set_drawn_item(item)
+        self.current_machine.add_state(state)
 
     def change_cursor(self):
         selected_tool = AppContext().selected_tool
@@ -56,11 +66,24 @@ class Editor(QGraphicsView):
             self.add_state(pos.x(), pos.y())
 
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "move":
-            self.setCursor(Qt.CursorShape.ClosedHandCursor)
+            item  = self.scene.itemAt(pos, self.scene.views()[0].transform())
+
+            if item:
+                self.setCursor(Qt.CursorShape.ClosedHandCursor)
+                self.dragged_item = item
+                self.drag_offset = event.screenPos() - item.pos()
+            else:
+                self.dragged_item = None
+
+    def mouseMoveEvent(self, event):
+        if self.dragged_item:
+            pos = event.screenPos() - self.drag_offset
+            self.dragged_item.setPos(pos)
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.change_cursor()
+            self.dragged_item = None
 
 
 class ToolBar(QWidget):

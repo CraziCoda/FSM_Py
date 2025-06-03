@@ -19,14 +19,11 @@ class AppContext(metaclass=SingletonMeta):
     world_watcher: QFileSystemWatcher = None
     machines: list[str] = []
     world_name: str = ""
+    selected_tool = "move"
+    
     _machines_update_handler: Callable[[], None] = None
     _world_name_update_handler: Callable[[], None] = None
     _tool_change_handler: Callable[[], None] = None
-    machine_details = {
-        "states": [],
-        "transitions": [],
-    }
-    selected_tool = "move"
 
     def set_machines(self, machines: list[str]):
         self.machines = machines
