@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QSize, QPoint
 from ui.styles.components import tools_list_style
 from context.context import AppContext
 from context.machine import *
+from ui.components.custom.graphics import *
 
 
 class Editor(QGraphicsView):
@@ -42,15 +43,14 @@ class Editor(QGraphicsView):
 
     def add_state(self, x, y):
         radius = 50
-        item = QGraphicsEllipseItem(
-            x - radius, y - radius, radius * 2, radius * 2)
-        item.setBrush(QBrush(QColor("#4cadfc")))
-        self.scene.addItem(item)
+        # item = QGraphicsEllipseItem(
+        #     x - radius, y - radius, radius * 2, radius * 2)
+        # item.setBrush(QBrush(QColor("#4cadfc")))
+        # self.scene.addItem(item)
 
-        state = State(f"q{len(self.current_machine.states)}",
-                      "moore", [x, y], True)
-        state.set_drawn_item(item)
-        self.current_machine.add_state(state)
+        item = GraphicsOutputStateItem("State", self)
+        item.setPos(x - item.width / 2, y - item.height / 2)
+        self.scene.addItem(item)
 
     def change_cursor(self):
         selected_tool = AppContext().selected_tool
@@ -73,7 +73,13 @@ class Editor(QGraphicsView):
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "move":
             item = self.scene.itemAt(pos, self.scene.views()[0].transform())
 
-            if item:
+            if not item:
+                pass
+            elif item.__class__.__name__ == "QGraphicsTextItem":
+                self.setCursor(Qt.CursorShape.ClosedHandCursor)
+                self.dragged_item = item.parentItem()
+                self.drag_offset = event.screenPos() - item.parentItem().pos()
+            elif item:
                 self.setCursor(Qt.CursorShape.ClosedHandCursor)
                 self.dragged_item = item
                 self.drag_offset = event.screenPos() - item.pos()
