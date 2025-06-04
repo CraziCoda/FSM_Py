@@ -101,8 +101,8 @@ class WorldWin(QWidget):
         self.world_list.addItems(worlds_sample)
 
         self.world_list.setStyleSheet(world_list_style)
-
         self.world_list_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.world_list.itemClicked.connect(self.select_machine)
 
         scroll = QScrollArea()
         scroll.setWidget(self.world_list)
@@ -139,5 +139,10 @@ class WorldWin(QWidget):
             if file.endswith(".fsm"):
                 path = os.path.join(folder, file)
                 os.remove(path)
+
+    def select_machine(self):
+        _machine = self.world_list.currentItem().text()
+
+        AppContext().load_machine(_machine)
         
                 

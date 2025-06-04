@@ -7,7 +7,7 @@ from context.machine import *
 
 
 class Editor(QGraphicsView):
-    current_machine: Machine = Machine()
+    current_machine: Machine = None
     dragged_item: QGraphicsItem = None
     last_pos_dragged_item: QPoint = None
     drag_offset: QPoint = None
@@ -26,6 +26,7 @@ class Editor(QGraphicsView):
         self.add_dot_grid()
 
         AppContext().set_handler("selected_tool", lambda: self.change_cursor())
+        AppContext().set_handler("selected_machine", lambda: self.load_machine())
 
     def add_dot(self, x, y, radius=2, color="#000000"):
         dot = QGraphicsEllipseItem(
@@ -46,7 +47,8 @@ class Editor(QGraphicsView):
         item.setBrush(QBrush(QColor("#4cadfc")))
         self.scene.addItem(item)
 
-        state = State(f"q{len(self.current_machine.states)}", "moore", [x, y], True)
+        state = State(f"q{len(self.current_machine.states)}",
+                      "moore", [x, y], True)
         state.set_drawn_item(item)
         self.current_machine.add_state(state)
 
@@ -55,9 +57,12 @@ class Editor(QGraphicsView):
 
         if selected_tool == "move":
             self.setCursor(Qt.CursorShape.OpenHandCursor)
-        
+
         if selected_tool == "add_state":
             self.setCursor(Qt.CursorShape.CrossCursor)
+
+    def load_machine(self):
+        self.current_machine = AppContext().selected_machine
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -66,7 +71,7 @@ class Editor(QGraphicsView):
             self.add_state(pos.x(), pos.y())
 
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "move":
-            item  = self.scene.itemAt(pos, self.scene.views()[0].transform())
+            item = self.scene.itemAt(pos, self.scene.views()[0].transform())
 
             if item:
                 self.setCursor(Qt.CursorShape.ClosedHandCursor)
@@ -163,5 +168,5 @@ class ToolBar(QWidget):
                 AppContext().set_selected_tool("zoom")
             else:
                 AppContext().set_selected_tool("move")
-            
+
         self.tools_list.itemClicked.connect(handle_item_click)
