@@ -42,15 +42,18 @@ class Editor(QGraphicsView):
                 self.add_dot(x, y, radius, "#aaaaaa")
 
     def add_state(self, x, y):
-        radius = 50
-        # item = QGraphicsEllipseItem(
-        #     x - radius, y - radius, radius * 2, radius * 2)
-        # item.setBrush(QBrush(QColor("#4cadfc")))
-        # self.scene.addItem(item)
+        if not self.current_machine:
+            return
+        
+        state = State(f"q{len(self.current_machine.states)}", [x, y])
 
-        item = GraphicsOutputStateItem("State", self)
+        item = GraphicsNormalStateItem(state.name, self)
         item.setPos(x - item.width / 2, y - item.height / 2)
         self.scene.addItem(item)
+        state.set_drawn_item(item)
+        self.current_machine.add_state(state)
+
+        AppContext().save_machine()
 
     def change_cursor(self):
         selected_tool = AppContext().selected_tool
@@ -63,6 +66,27 @@ class Editor(QGraphicsView):
 
     def load_machine(self):
         self.current_machine = AppContext().selected_machine
+
+        self.scene.clear()
+        self.add_dot_grid()
+
+        for state in self.current_machine.states:
+            if state.initial:
+                item = GraphicsInputStateItem(state.name, self)
+                item.setPos(state.location[0], state.location[1])
+                state.set_drawn_item(item)
+                self.scene.addItem(item)
+            elif state.accepting:
+                item = GraphicsOutputStateItem(state.name, self)
+                item.setPos(state.location[0], state.location[1])
+                state.set_drawn_item(item)
+                self.scene.addItem(item)
+            else:
+                item = GraphicsNormalStateItem(state.name, self)
+                item.setPos(state.location[0], state.location[1])
+                state.set_drawn_item(item)
+                self.scene.addItem(item)
+
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -90,6 +114,12 @@ class Editor(QGraphicsView):
         if self.dragged_item:
             pos = event.screenPos() - self.drag_offset
             self.dragged_item.setPos(pos)
+
+            for state in self.current_machine.states:
+                if state.get_drawn_item() == self.dragged_item:
+                    state.location = [pos.x() , pos.y()]
+
+            AppContext().save_machine()
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

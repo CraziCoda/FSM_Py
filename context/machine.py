@@ -1,19 +1,21 @@
-from PyQt5.QtWidgets import QGraphicsEllipseItem
+from PyQt5.QtWidgets import QGraphicsItem
 
 
 class State:
     name = ""
     initial = False
+    accepting = False
     location = [0, 0]
-    _drawn_item: QGraphicsEllipseItem = None
+    _drawn_item: QGraphicsItem = None
 
 
-    def __init__(self, name, location, initial=False):
+    def __init__(self, name, location, initial=False, accepting=False):
         self.name = name
         self.initial = initial
         self.location = location
+        self.accepting = accepting
 
-    def set_drawn_item(self, item: QGraphicsEllipseItem):
+    def set_drawn_item(self, item: QGraphicsItem):
         self._drawn_item = item
 
     def get_drawn_item(self):

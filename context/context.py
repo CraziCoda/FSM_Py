@@ -70,7 +70,26 @@ class AppContext(metaclass=SingletonMeta):
             machine = Machine(data["name"], data["type"])
 
             for state in data["states"]:
-                machine_state = State(state["name"], state["location"])
+                machine_state = State(state["name"], state["location"], state["initial"])
                 machine.add_state(machine_state)
 
             self.set_selected_machine(machine)
+
+    
+    def save_machine(self):
+        data = {
+            "name": self.selected_machine.name,
+            "type": self.selected_machine._type,
+            "states": []
+        }
+
+        for state in self.selected_machine.states:
+            data["states"].append({
+                "name": state.name,
+                "location": state.location,
+                "initial": state.initial,
+                "accepting": state.accepting
+            })
+
+        with open(f"{self.settings.value('world_folder')}/{self.selected_machine.name}", "w") as f:
+            f.write(json.dumps(data))

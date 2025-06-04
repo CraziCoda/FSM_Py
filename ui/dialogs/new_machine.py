@@ -59,7 +59,6 @@ class NewMachineDialog(QDialog):
         default["name"] = name
         default["type"] = type
 
-        print(default)
         
         world = AppContext().settings.value("world_folder")
         
