@@ -13,6 +13,11 @@ class Editor(QGraphicsView):
     last_pos_dragged_item: QPoint = None
     drag_offset: QPoint = None
 
+    max_zoom = 1
+    min_zoom = 0.5
+    zoom_factor = 1
+    zoom_step = 0.01
+
     def __init__(self):
         super().__init__()
 
@@ -29,6 +34,8 @@ class Editor(QGraphicsView):
         AppContext().set_handler("selected_tool", lambda: self.change_cursor())
         AppContext().set_handler("selected_machine", lambda: self.load_machine())
 
+        self.scale(self.zoom_factor, self.zoom_factor)
+
     def add_dot(self, x, y, radius=2, color="#000000"):
         dot = QGraphicsEllipseItem(
             x - radius, y - radius, radius * 2, radius * 2)
@@ -44,7 +51,7 @@ class Editor(QGraphicsView):
     def add_state(self, x, y):
         if not self.current_machine:
             return
-        
+
         state = State(f"q{len(self.current_machine.states)}", [x, y])
 
         item = GraphicsNormalStateItem(state.name, self)
@@ -63,6 +70,9 @@ class Editor(QGraphicsView):
 
         if selected_tool == "add_state":
             self.setCursor(Qt.CursorShape.CrossCursor)
+
+        if selected_tool == "zoom":
+            self.setCursor(Qt.CursorShape.SizeFDiagCursor)
 
     def load_machine(self):
         self.current_machine = AppContext().selected_machine
@@ -86,7 +96,6 @@ class Editor(QGraphicsView):
                 item.setPos(state.location[0], state.location[1])
                 state.set_drawn_item(item)
                 self.scene.addItem(item)
-
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -117,7 +126,7 @@ class Editor(QGraphicsView):
 
             for state in self.current_machine.states:
                 if state.get_drawn_item() == self.dragged_item:
-                    state.location = [pos.x() , pos.y()]
+                    state.location = [pos.x(), pos.y()]
 
             AppContext().save_machine()
 
@@ -125,6 +134,17 @@ class Editor(QGraphicsView):
         if event.button() == Qt.MouseButton.LeftButton:
             self.change_cursor()
             self.dragged_item = None
+
+    def wheelEvent(self, event):
+        if AppContext().selected_tool == "zoom":
+            if event.angleDelta().y() > 0:
+                self.scale(1.05, 1.05)
+            else:
+                self.scale(0.95, 0.95)
+
+            return
+
+        return super().wheelEvent(event)
 
 
 class ToolBar(QWidget):
