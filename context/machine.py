@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsItem, QMessageBox
 
 
 class State:
@@ -23,14 +23,11 @@ class State:
 
 
 class Transition:
-    source = ""
-    target = ""
-    symbol = ""
+    def __init__(self, source: State, target: State, name: str = ""):
+        self.source: State = source
+        self.target: State = target
+        self.name = name
 
-    def __init__(self, source, target, symbol):
-        self.source = source
-        self.target = target
-        self.symbol = symbol
 
 
 class Machine:
@@ -45,7 +42,18 @@ class Machine:
             self.states.append(initial_state)
 
     def add_state(self, state: State):
+        for s in self.states:
+            if s.name == state.name:
+                return QMessageBox.critical(None, "Error", f"State with name {state.name} already exists")
         self.states.append(state)
+
+    def add_transition(self, transition: Transition):
+        self.transitions.append(transition)
+
+    def get_state_by_name(self, name: str):
+        for state in self.states:
+            if state.name == name:
+                return state
 
     def __str__(self):
         return f"Machine: {self.name} ({self._type}) with {len(self.states)} states"

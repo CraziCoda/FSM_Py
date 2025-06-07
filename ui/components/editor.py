@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QWidget, QVBoxLayout, QGraphicsEllipseItem, QListWidget, QListWidgetItem, QGraphicsItem
 from PyQt5.QtGui import QPainter, QPen, QIcon, QBrush, QColor, QTransform
-from PyQt5.QtCore import Qt, QSize, QPoint
+from PyQt5.QtCore import Qt, QSize, QPoint, QLineF, QPointF
 from ui.styles.components import tools_list_style
 from context.context import AppContext
 from context.machine import *
@@ -12,6 +12,8 @@ class Editor(QGraphicsView):
     dragged_item: QGraphicsItem = None
     last_pos_dragged_item: QPoint = None
     drag_offset: QPoint = None
+    adding_transition_line: QGraphicsLineItem = None
+    starting_state_transition: State = None
 
     max_zoom = 1
     min_zoom = 0.5
@@ -21,7 +23,7 @@ class Editor(QGraphicsView):
     def __init__(self):
         super().__init__()
 
-        self.scene = QGraphicsScene()
+        self.scene: QGraphicsScene = QGraphicsScene()
         self.setScene(self.scene)
 
         self.setSceneRect(-1000, -1000, 2000, 2000)
@@ -65,11 +67,18 @@ class Editor(QGraphicsView):
     def change_cursor(self):
         selected_tool = AppContext().selected_tool
 
+        if self.adding_transition_line and selected_tool != "add_transition":
+            self.scene.removeItem(self.adding_transition_line)
+            self.adding_transition_line = None
+
         if selected_tool == "move":
             self.setCursor(Qt.CursorShape.OpenHandCursor)
 
         if selected_tool == "add_state":
             self.setCursor(Qt.CursorShape.CrossCursor)
+
+        if selected_tool == "add_transition":
+            self.setCursor(Qt.CursorShape.PointingHandCursor)
 
         if selected_tool == "zoom":
             self.setCursor(Qt.CursorShape.SizeFDiagCursor)
@@ -97,6 +106,12 @@ class Editor(QGraphicsView):
                 state.set_drawn_item(item)
                 self.scene.addItem(item)
 
+    def get_state_from_item(self, item: QGraphicsItem) -> State | None:
+        for state in self.current_machine.states:
+            if state.get_drawn_item() == item:
+                return state
+        return None
+
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
 
@@ -107,7 +122,7 @@ class Editor(QGraphicsView):
             item = self.scene.itemAt(pos, self.scene.views()[0].transform())
 
             if not item:
-                pass
+                self.dragged_item = None
             elif item.__class__.__name__ == "QGraphicsTextItem":
                 self.setCursor(Qt.CursorShape.ClosedHandCursor)
                 self.dragged_item = item.parentItem()
@@ -119,16 +134,65 @@ class Editor(QGraphicsView):
             else:
                 self.dragged_item = None
 
+        if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "add_transition":
+            item = self.scene.itemAt(pos, self.scene.views()[0].transform())
+            screen_pos = self.mapToScene(event.pos())
+
+            if self.adding_transition_line:
+                if item.__class__.__name__.startswith("Graphics") and self.starting_state_transition:
+                    target_state = self.get_state_from_item(item)
+
+                    if target_state:
+                        transition_name = f"t{len(self.current_machine.transitions)}"
+                        transition = Transition(self.starting_state_transition, target_state, transition_name)
+                        self.current_machine.add_transition(transition)
+
+                        AppContext().save_machine()
+
+                self.scene.removeItem(self.adding_transition_line)
+                self.adding_transition_line = None
+
+                return
+
+            if not item:
+                pass
+            elif item.__class__.__name__ == "QGraphicsTextItem":
+                pos = item.parentItem().pos() + QPointF(item.parentItem().width / 2,
+                                                        item.parentItem().height / 2)
+
+                self.adding_transition_line = self.scene\
+                    .addLine(QLineF(pos, screen_pos))
+
+                self.starting_state_transition = self\
+                    .get_state_from_item(item.parentItem())
+
+            elif item.__class__.__name__.startswith("Graphics"):
+                pos = item.pos() + QPointF(item.width / 2,
+                                           item.height / 2)
+
+                self.adding_transition_line = self.scene\
+                    .addLine(QLineF(pos, screen_pos))
+
+                self.starting_state_transition = self\
+                    .get_state_from_item(item)
+            else:
+                pass
+
     def mouseMoveEvent(self, event):
-        if self.dragged_item:
+        if self.dragged_item and self.current_machine:
             pos = event.screenPos() - self.drag_offset
             self.dragged_item.setPos(pos)
 
-            for state in self.current_machine.states:
-                if state.get_drawn_item() == self.dragged_item:
-                    state.location = [pos.x(), pos.y()]
+            dragged_state = self.get_state_from_item(self.dragged_item)
+            if dragged_state:
+                dragged_state.location = [pos.x(), pos.y()]
 
             AppContext().save_machine()
+
+        if self.adding_transition_line:
+            pos = self.mapToScene(event.pos()) - QPointF(3, 3)
+            self.adding_transition_line.setLine(
+                QLineF(self.adding_transition_line.line().p1(), pos))
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

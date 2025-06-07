@@ -2,7 +2,7 @@ from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import QFileSystemWatcher
 from typing import Callable
-from context.machine import Machine, State
+from context.machine import Machine, State, Transition
 import json
 
 
@@ -73,6 +73,13 @@ class AppContext(metaclass=SingletonMeta):
                 machine_state = State(state["name"], state["location"], state["initial"])
                 machine.add_state(machine_state)
 
+            for transition in data["transitions"]:
+                machine.add_transition(Transition(
+                    machine.get_state_by_name(transition["source"]),
+                    machine.get_state_by_name(transition["target"]),
+                    transition["name"]
+                ))
+
             self.set_selected_machine(machine)
 
     
@@ -80,7 +87,8 @@ class AppContext(metaclass=SingletonMeta):
         data = {
             "name": self.selected_machine.name,
             "type": self.selected_machine._type,
-            "states": []
+            "states": [],
+            "transitions": []
         }
 
         for state in self.selected_machine.states:
@@ -89,6 +97,13 @@ class AppContext(metaclass=SingletonMeta):
                 "location": state.location,
                 "initial": state.initial,
                 "accepting": state.accepting
+            })
+
+        for transition in self.selected_machine.transitions:
+            data["transitions"].append({
+                "source": transition.source.name,
+                "target": transition.target.name,
+                "name": transition.name
             })
 
         with open(f"{self.settings.value('world_folder')}/{self.selected_machine.name}", "w") as f:
