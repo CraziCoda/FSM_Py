@@ -106,6 +106,14 @@ class Editor(QGraphicsView):
                 state.set_drawn_item(item)
                 self.scene.addItem(item)
 
+        for transition in self.current_machine.transitions:
+            line_item = GraphicsTransitionItem(transition, self)
+            line_item.update()       
+
+            self.scene.addItem(line_item)
+
+        self.scene.update()
+
     def get_state_from_item(self, item: QGraphicsItem) -> State | None:
         for state in self.current_machine.states:
             if state.get_drawn_item() == item:
@@ -121,7 +129,7 @@ class Editor(QGraphicsView):
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "move":
             item = self.scene.itemAt(pos, self.scene.views()[0].transform())
 
-            if not item:
+            if not item or "Transition" in item.__class__.__name__:
                 self.dragged_item = None
             elif item.__class__.__name__ == "QGraphicsTextItem":
                 self.setCursor(Qt.CursorShape.ClosedHandCursor)
@@ -147,10 +155,28 @@ class Editor(QGraphicsView):
                         transition = Transition(self.starting_state_transition, target_state, transition_name)
                         self.current_machine.add_transition(transition)
 
+                        line = GraphicsTransitionItem(transition, self)
+                        self.scene.addItem(line)
+
+
+                        AppContext().save_machine()
+
+                elif item.__class__.__name__ == "QGraphicsTextItem" and self.starting_state_transition:
+                    target_state = self.get_state_from_item(item.parentItem())
+
+                    if target_state:
+                        transition_name = f"t{len(self.current_machine.transitions)}"
+                        transition = Transition(self.starting_state_transition, target_state, transition_name)
+                        self.current_machine.add_transition(transition)
+
+                        line = GraphicsTransitionItem(transition, self)
+                        self.scene.addItem(line)
+
                         AppContext().save_machine()
 
                 self.scene.removeItem(self.adding_transition_line)
                 self.adding_transition_line = None
+
 
                 return
 
@@ -193,6 +219,7 @@ class Editor(QGraphicsView):
             pos = self.mapToScene(event.pos()) - QPointF(3, 3)
             self.adding_transition_line.setLine(
                 QLineF(self.adding_transition_line.line().p1(), pos))
+            
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
