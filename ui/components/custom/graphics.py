@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsScene
 from PyQt5.QtGui import QPainter, QPen, QFont, QBrush, QColor, QPixmap
-from PyQt5.QtCore import QRectF, Qt, QPointF
+from PyQt5.QtCore import QRectF, Qt, QPointF, QEvent
 from context.machine import State, Transition
 
 
@@ -100,23 +100,23 @@ class GraphicsTransitionItem(QGraphicsItem):
         self.start_state = transition.source
         self.end_state = transition.target
 
-        source_item = transition.source.get_drawn_item()
-        target_item = transition.target.get_drawn_item()
+        self.source_item = transition.source.get_drawn_item()
+        self.target_item = transition.target.get_drawn_item()
 
-        self.source = source_item.scenePos() + QPointF(source_item.width / 2,
-                                                       source_item.height / 2)
+        self.source = self.source_item.scenePos() + QPointF(self.source_item.width / 2,
+                                                            self.source_item.height / 2)
 
-        self.target = target_item.scenePos() + QPointF(target_item.width / 2,
-                                                       target_item.height / 2)
+        self.target = self.target_item.scenePos() + QPointF(self.target_item.width / 2,
+                                                            self.target_item.height / 2)
 
         self.setZValue(-1)
-        self.setFlags(
-            QGraphicsItem.GraphicsItemFlag.ItemIsSelectable |
-            QGraphicsItem.GraphicsItemFlag.ItemIsMovable
-        )
+        self.start_state.add_handle(self.update_pos)
+        self.end_state.add_handle(self.update_pos)
+
 
     def boundingRect(self):
-        return QRectF(self.source, self.target).normalized()
+        rect = QRectF(self.source, self.target).normalized()
+        return rect
 
     def paint(self, painter, option, widget=...):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -125,3 +125,11 @@ class GraphicsTransitionItem(QGraphicsItem):
         painter.setBrush(QBrush(QColor("#000000")))
 
         painter.drawLine(self.source, self.target)
+
+    def update_pos(self):
+        self.source = self.source_item.scenePos() + QPointF(self.source_item.width / 2,
+                                                            self.source_item.height / 2)
+
+        self.target = self.target_item.scenePos() + QPointF(self.target_item.width / 2,
+                                                            self.target_item.height / 2)
+        self.update()

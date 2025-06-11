@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsItem, QMessageBox
+from typing import Callable
 
 
 class State:
@@ -8,12 +9,12 @@ class State:
     location = [0, 0]
     _drawn_item: QGraphicsItem = None
 
-
     def __init__(self, name, location, initial=False, accepting=False):
         self.name = name
         self.initial = initial
         self.location = location
         self.accepting = accepting
+        self._handles: list[Callable[[], None]] = []
 
     def set_drawn_item(self, item: QGraphicsItem):
         self._drawn_item = item
@@ -21,13 +22,24 @@ class State:
     def get_drawn_item(self):
         return self._drawn_item
 
+    def set_location(self, location):
+        self.location = location
+
+        for handle in self._handles:
+            handle()
+
+    def add_handle(self, handle: Callable[[], None]):
+        self._handles.append(handle)
+
+    def __str__(self):
+        return f"State: {self.name} at {self.location} is initial: {self.initial} is accepting: {self.accepting}"
+
 
 class Transition:
     def __init__(self, source: State, target: State, name: str = ""):
         self.source: State = source
         self.target: State = target
         self.name = name
-
 
 
 class Machine:
