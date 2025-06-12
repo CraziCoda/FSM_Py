@@ -106,11 +106,34 @@ class Editor(QGraphicsView):
                 state.set_drawn_item(item)
                 self.scene.addItem(item)
 
+        paired_states: list = []
+        for i, state in enumerate(self.current_machine.states):
+            for j in range(i + 1, len(self.current_machine.states)):
+                other_state = self.current_machine.states[j]
+                paired_states.append((state, other_state))
+
+        parallel_transitions: list[list[Transition]] = []
+        for i in range(len(paired_states)):
+            parallel_transitions.append([])
+
         for transition in self.current_machine.transitions:
-            line_item = GraphicsTransitionItem(transition, self)
+            for i, paired_state in enumerate(paired_states):
+                if (transition.source == paired_state[0] or transition.target == paired_state[0]) and (transition.source == paired_state[1] or transition.target == paired_state[1]):
+                    parallel_transitions[i].append(transition)
 
-            self.scene.addItem(line_item)
+        for parallel_transition_group in parallel_transitions:
+            num_parallel_transitions = len(parallel_transition_group)
+            start_index = 0
+            if num_parallel_transitions > 1:
+                start_index = -(num_parallel_transitions // 2)
 
+            for transition in parallel_transition_group:
+                line = GraphicsTransitionItem(transition, control_value=start_index, parent=self.scene)
+                self.scene.addItem(line)
+                
+                start_index += 1
+                if num_parallel_transitions % 2 == 0:
+                    start_index += 1
         self.scene.update()
 
     def get_state_from_item(self, item: QGraphicsItem) -> State | None:
@@ -155,7 +178,7 @@ class Editor(QGraphicsView):
                             self.starting_state_transition, target_state, transition_name)
                         self.current_machine.add_transition(transition)
 
-                        line = GraphicsTransitionItem(transition, self)
+                        line = GraphicsTransitionItem(transition, parent=self.scene)
                         self.scene.addItem(line)
 
                         AppContext().save_machine()
@@ -169,7 +192,7 @@ class Editor(QGraphicsView):
                             self.starting_state_transition, target_state, transition_name)
                         self.current_machine.add_transition(transition)
 
-                        line = GraphicsTransitionItem(transition, self)
+                        line = GraphicsTransitionItem(transition, parent=self.scene)
                         self.scene.addItem(line)
 
                         AppContext().save_machine()
@@ -202,7 +225,7 @@ class Editor(QGraphicsView):
                     .get_state_from_item(item)
             else:
                 pass
-            
+
             self.scene.update()
 
     def mouseMoveEvent(self, event):
@@ -220,7 +243,7 @@ class Editor(QGraphicsView):
             pos = self.mapToScene(event.pos()) - QPointF(3, 3)
             self.adding_transition_line.setLine(
                 QLineF(self.adding_transition_line.line().p1(), pos))
-            
+
         self.scene.update()
 
     def mouseReleaseEvent(self, event):
