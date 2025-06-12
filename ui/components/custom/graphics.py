@@ -140,7 +140,7 @@ class GraphicsTransitionItem(QGraphicsItem):
 
         mid_point = QPointF(mid_x, mid_y)
 
-        dx = abs(self.target.x() - self.source.x()) 
+        dx = abs(self.target.x() - self.source.x())
         dy = abs(self.target.y() - self.source.y())
 
         length = math.hypot(dx, dy)
@@ -151,10 +151,7 @@ class GraphicsTransitionItem(QGraphicsItem):
         perp_dx = -dy / length
         perp_dy = dx / length
 
-        final = QPointF(mid_point.x() + (perp_dx * control),
-                        mid_point.y() + (perp_dy * control))
-
-        return final
+        return QPointF(mid_point.x() + (perp_dx * control), mid_point.y() + (perp_dy * control))
 
     def update_pos(self):
         self.source = self.source_item.scenePos() + QPointF(self.source_item.width / 2,
