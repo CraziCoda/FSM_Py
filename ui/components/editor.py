@@ -15,8 +15,6 @@ class Editor(QGraphicsView):
     adding_transition_line: QGraphicsLineItem = None
     starting_state_transition: State = None
 
-    max_zoom = 1
-    min_zoom = 0.5
     zoom_factor = 1
     zoom_step = 0.01
 
@@ -128,11 +126,12 @@ class Editor(QGraphicsView):
                 start_index = -(num_parallel_transitions // 2)
 
             for transition in parallel_transition_group:
-                line = GraphicsTransitionItem(transition, control_value=start_index, parent=self.scene)
+                line = GraphicsTransitionItem(
+                    transition, control_value=start_index, parent=self.scene)
                 self.scene.addItem(line)
-                
+
                 start_index += 1
-                if num_parallel_transitions % 2 == 0:
+                if num_parallel_transitions % 2 == 0 and start_index == 0:
                     start_index += 1
         self.scene.update()
 
@@ -178,7 +177,8 @@ class Editor(QGraphicsView):
                             self.starting_state_transition, target_state, transition_name)
                         self.current_machine.add_transition(transition)
 
-                        line = GraphicsTransitionItem(transition, parent=self.scene)
+                        line = GraphicsTransitionItem(
+                            transition, parent=self.scene)
                         self.scene.addItem(line)
 
                         AppContext().save_machine()
@@ -192,7 +192,8 @@ class Editor(QGraphicsView):
                             self.starting_state_transition, target_state, transition_name)
                         self.current_machine.add_transition(transition)
 
-                        line = GraphicsTransitionItem(transition, parent=self.scene)
+                        line = GraphicsTransitionItem(
+                            transition, parent=self.scene)
                         self.scene.addItem(line)
 
                         AppContext().save_machine()

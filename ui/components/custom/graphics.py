@@ -128,7 +128,7 @@ class GraphicsTransitionItem(QGraphicsItem):
 
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        painter.setPen(QPen(Qt.PenStyle.SolidLine))
+        painter.setPen(QPen(Qt.GlobalColor.blue, 2))
 
         painter.drawPath(path)
 
