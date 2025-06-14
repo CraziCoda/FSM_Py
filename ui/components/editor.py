@@ -201,6 +201,8 @@ class Editor(QGraphicsView):
                 self.scene.removeItem(self.adding_transition_line)
                 self.adding_transition_line = None
                 self.scene.update()
+
+                self.load_machine()
                 return
 
             if not item:

@@ -97,6 +97,7 @@ class GraphicsOutputStateItem(QGraphicsItem):
 class GraphicsTransitionItem(QGraphicsItem):
     def __init__(self, transition: Transition, control_value: int = 0, parent: QGraphicsScene = None):
         super().__init__()
+        self.transition = transition
 
         self.start_state = transition.source
         self.end_state = transition.target
@@ -154,9 +155,11 @@ class GraphicsTransitionItem(QGraphicsItem):
         return QPointF(mid_point.x() + (perp_dx * control), mid_point.y() + (perp_dy * control))
 
     def update_pos(self):
-        self.source = self.source_item.scenePos() + QPointF(self.source_item.width / 2,
-                                                            self.source_item.height / 2)
+        source_item = self.transition.source.get_drawn_item()
+        target_item = self.transition.target.get_drawn_item()
 
-        self.target = self.target_item.scenePos() + QPointF(self.target_item.width / 2,
-                                                            self.target_item.height / 2)
-        self.update()
+        self.source = source_item.scenePos() + QPointF(target_item.width / 2,
+                                                       target_item.height / 2)
+
+        self.target = target_item.scenePos() + QPointF(target_item.width / 2,
+                                                       target_item.height / 2)
