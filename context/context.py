@@ -70,7 +70,7 @@ class AppContext(metaclass=SingletonMeta):
             machine = Machine(data["name"], data["type"])
 
             for state in data["states"]:
-                machine_state = State(state["name"], state["location"], state["initial"])
+                machine_state = State(state["name"], state["location"], state["initial"], state["accepting"])
                 machine.add_state(machine_state)
 
             for transition in data["transitions"]:

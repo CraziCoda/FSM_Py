@@ -78,6 +78,9 @@ class Editor(QGraphicsView):
         if selected_tool == "add_transition":
             self.setCursor(Qt.CursorShape.PointingHandCursor)
 
+        if selected_tool == "accept_state":
+            self.setCursor(Qt.CursorShape.CrossCursor)
+        
         if selected_tool == "zoom":
             self.setCursor(Qt.CursorShape.SizeFDiagCursor)
 
@@ -88,11 +91,18 @@ class Editor(QGraphicsView):
         self.add_dot_grid()
 
         for state in self.current_machine.states:
-            if state.initial:
+            if state.initial and not state.accepting:
                 item = GraphicsInputStateItem(state.name, self)
                 item.setPos(state.location[0], state.location[1])
                 state.set_drawn_item(item)
                 self.scene.addItem(item)
+
+            elif state.accepting and state.initial:
+                item = GraphicsAcceptedInputStateItem(state.name, self)
+                item.setPos(state.location[0], state.location[1])
+                state.set_drawn_item(item)
+                self.scene.addItem(item)
+                
             elif state.accepting:
                 item = GraphicsOutputStateItem(state.name, self)
                 item.setPos(state.location[0], state.location[1])
@@ -230,6 +240,26 @@ class Editor(QGraphicsView):
                 pass
 
             self.scene.update()
+
+        if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "accept_state":
+            item = self.scene.itemAt(pos, self.scene.views()[0].transform())
+            screen_pos = self.mapToScene(event.pos())
+
+            if item.__class__.__name__.startswith("Graphics"):
+                state = self.get_state_from_item(item)
+
+                if state:
+                    state.accepting = not state.accepting
+
+            elif item.__class__.__name__ == "QGraphicsTextItem":
+                state = self.get_state_from_item(item.parentItem())
+
+                if state:
+                    state.accepting = not state.accepting
+            
+
+            AppContext().save_machine()
+            self.load_machine()
 
     def mouseMoveEvent(self, event):
         if self.dragged_item and self.current_machine:
