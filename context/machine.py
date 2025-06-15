@@ -36,11 +36,17 @@ class State:
 
 
 class Transition:
+    _drawn_item: QGraphicsItem = None
     def __init__(self, source: State, target: State, name: str = ""):
         self.source: State = source
         self.target: State = target
         self.name = name
 
+    def set_drawn_item(self, item: QGraphicsItem):
+        self._drawn_item = item
+    
+    def get_drawn_item(self):
+        return self._drawn_item
 
 class Machine:
 

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsScene
-from PyQt5.QtGui import QPainter, QPen, QFont, QBrush, QColor, QPixmap, QPainterPath
+from PyQt5.QtGui import QPainter, QPen, QFont, QBrush, QColor, QPixmap, QPainterPath, QPainterPathStroker
 from PyQt5.QtCore import QRectF, Qt, QPointF
 from context.machine import State, Transition
 import math
@@ -138,6 +138,8 @@ class GraphicsTransitionItem(QGraphicsItem):
         self.start_state = transition.source
         self.end_state = transition.target
 
+        self.pen = QPen(Qt.GlobalColor.blue, 2)
+
         self.source_item = transition.source.get_drawn_item()
         self.target_item = transition.target.get_drawn_item()
 
@@ -154,8 +156,13 @@ class GraphicsTransitionItem(QGraphicsItem):
         self.control_value = control_value
 
     def boundingRect(self):
-        rect = QRectF(self.source, self.target).normalized()
-        return rect
+        path = QPainterPath(self.source)
+        control_point = self.find_control_point()
+
+        path.quadTo(control_point, self.target)
+
+        return path.boundingRect().adjusted(-5, -5, 5, 5)
+        
 
     def paint(self, painter, option, widget=...):
         path = QPainterPath(self.source)
@@ -165,9 +172,21 @@ class GraphicsTransitionItem(QGraphicsItem):
 
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        painter.setPen(QPen(Qt.GlobalColor.blue, 2))
-
+        painter.setPen(self.pen)
+        
         painter.drawPath(path)
+
+    def shape(self):
+        stroker = QPainterPathStroker()
+        stroker.setWidth(self.pen.widthF() + 10)  # +2 to allow a bit of room for clicking
+        return stroker.createStroke(self._make_path())
+    
+    def _make_path(self):
+        path = QPainterPath(self.source)
+        control_point = self.find_control_point()
+
+        path.quadTo(control_point, self.target)
+        return path
 
     def find_control_point(self):
         control = 100 * self.control_value

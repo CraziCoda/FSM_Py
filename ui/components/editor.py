@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QWidget, QVBoxLayout, QGraphicsEllipseItem, QListWidget, QListWidgetItem, QGraphicsItem
-from PyQt5.QtGui import QPainter, QPen, QIcon, QBrush, QColor, QTransform
+from PyQt5.QtGui import QPainter, QPen, QIcon, QBrush, QColor, QCursor, QPixmap, QTransform
 from PyQt5.QtCore import Qt, QSize, QPoint, QLineF, QPointF
 from ui.styles.components import tools_list_style
 from context.context import AppContext
@@ -80,7 +80,14 @@ class Editor(QGraphicsView):
 
         if selected_tool == "accept_state":
             self.setCursor(Qt.CursorShape.CrossCursor)
-        
+
+        if selected_tool == "remove_transition":
+            transform = QTransform().rotate(-45)
+            pixmap = QPixmap("assets/tools/scissors.png")\
+                .scaled(20, 20).transformed(transform, mode=Qt.TransformationMode.SmoothTransformation)
+            cursor = QCursor(pixmap, 10, 10)
+            self.setCursor(cursor)
+
         if selected_tool == "zoom":
             self.setCursor(Qt.CursorShape.SizeFDiagCursor)
 
@@ -102,7 +109,7 @@ class Editor(QGraphicsView):
                 item.setPos(state.location[0], state.location[1])
                 state.set_drawn_item(item)
                 self.scene.addItem(item)
-                
+
             elif state.accepting:
                 item = GraphicsOutputStateItem(state.name, self)
                 item.setPos(state.location[0], state.location[1])
@@ -140,6 +147,8 @@ class Editor(QGraphicsView):
                     transition, control_value=start_index, parent=self.scene)
                 self.scene.addItem(line)
 
+                transition.set_drawn_item(line)
+
                 start_index += 1
                 if num_parallel_transitions % 2 == 0 and start_index == 0:
                     start_index += 1
@@ -149,6 +158,12 @@ class Editor(QGraphicsView):
         for state in self.current_machine.states:
             if state.get_drawn_item() == item:
                 return state
+        return None
+    
+    def get_transition_from_item(self, item: QGraphicsItem) -> Transition | None:
+        for transition in self.current_machine.transitions:
+            if transition.get_drawn_item() == item:
+                return transition
         return None
 
     def mousePressEvent(self, event):
@@ -261,6 +276,25 @@ class Editor(QGraphicsView):
             AppContext().save_machine()
             self.load_machine()
 
+        if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "remove_transition":
+            item = self.scene.itemAt(pos, self.scene.views()[0].transform())
+
+            if item.__class__.__name__ == "GraphicsTransitionItem":
+                transition = self.get_transition_from_item(item)
+
+                if transition:
+                    transform = QTransform().rotate(-45)
+                    pixmap = QPixmap("assets/tools/scissors-close.png")\
+                        .scaled(20, 20).transformed(transform, mode=Qt.TransformationMode.SmoothTransformation)
+                    cursor = QCursor(pixmap, 10, 10)
+                    self.setCursor(cursor)
+                    
+                    self.current_machine.transitions.pop(self.current_machine.transitions.index(transition))
+                    self.scene.removeItem(item)
+                    AppContext().save_machine()
+                    self.load_machine()
+                    
+                    
     def mouseMoveEvent(self, event):
         if self.dragged_item and self.current_machine:
             pos = event.screenPos() - self.drag_offset
