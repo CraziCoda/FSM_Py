@@ -32,7 +32,7 @@ class State:
         self._handles.append(handle)
 
     def __str__(self):
-        return f"State: {self.name} at {self.location} is initial: {self.initial} is accepting: {self.accepting}"
+        return f"State: {self.name} at {self.location}. Is initial: {self.initial}. Is accepting: {self.accepting}"
 
 
 class Transition:
@@ -47,6 +47,9 @@ class Transition:
     
     def get_drawn_item(self):
         return self._drawn_item
+    
+    def __str__(self):
+        return f"Transition: {self.name} from {self.source.name} to {self.target.name}"
 
 class Machine:
 

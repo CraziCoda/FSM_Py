@@ -88,6 +88,12 @@ class Editor(QGraphicsView):
             cursor = QCursor(pixmap, 10, 10)
             self.setCursor(cursor)
 
+        if selected_tool == "remove_state":
+            pixmap = QPixmap("assets/tools/bin-close.png")\
+                .scaled(20, 20)
+            cursor = QCursor(pixmap, 10, 10)
+            self.setCursor(cursor)
+
         if selected_tool == "zoom":
             self.setCursor(Qt.CursorShape.SizeFDiagCursor)
 
@@ -165,6 +171,20 @@ class Editor(QGraphicsView):
             if transition.get_drawn_item() == item:
                 return transition
         return None
+    
+    def remove_state(self, state: State):
+        transitions = self.current_machine.transitions.copy()
+
+        for transtion in transitions:
+            if state in [transtion.source, transtion.target]:
+                self.current_machine.transitions.pop(self.current_machine.transitions.index(transtion))
+
+        try: 
+            self.current_machine.states.pop(self.current_machine.states.index(state))
+        except:
+            pass
+
+        AppContext().save_machine()
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -293,6 +313,21 @@ class Editor(QGraphicsView):
                     self.scene.removeItem(item)
                     AppContext().save_machine()
                     self.load_machine()
+
+        if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "remove_state":
+            item = self.scene.itemAt(pos, self.scene.views()[0].transform())
+
+            if item.__class__.__name__.startswith("Graphics"):
+                state = self.get_state_from_item(item)
+
+                if state and state.initial == False:
+                    pixmap = QPixmap("assets/tools/bin-open.png")\
+                        .scaled(20, 20)
+                    cursor = QCursor(pixmap, 10, 10)
+                    self.setCursor(cursor)
+                    
+                    self.remove_state(state)
+                    self.load_machine()
                     
                     
     def mouseMoveEvent(self, event):
@@ -302,6 +337,7 @@ class Editor(QGraphicsView):
 
             dragged_state = self.get_state_from_item(self.dragged_item)
             if dragged_state:
+                print(dragged_state)
                 dragged_state.set_location([pos.x(), pos.y()])
 
             AppContext().save_machine()
