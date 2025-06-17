@@ -337,7 +337,6 @@ class Editor(QGraphicsView):
 
             dragged_state = self.get_state_from_item(self.dragged_item)
             if dragged_state:
-                print(dragged_state)
                 dragged_state.set_location([pos.x(), pos.y()])
 
             AppContext().save_machine()
