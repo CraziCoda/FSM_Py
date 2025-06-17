@@ -61,17 +61,17 @@ class TopFrame(QWidget):
         right_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.right.setLayout(right_frame_layout)
 
-        right_frame_splitter = QSplitter(Qt.Vertical)
+        right_frame_splitter = QSplitter(Qt.Orientation.Vertical)
         right_frame_splitter.addWidget(MinWindow("Simulation", SimulationWin()))
         right_frame_splitter.addWidget(MinWindow("Input"))
         right_frame_layout.addWidget(right_frame_splitter)
-
-        splitter = QSplitter(Qt.Horizontal)
+        
+        splitter = QSplitter(Qt.Orientation.Horizontal)
         splitter.addWidget(self.left)
         splitter.addWidget(self.main)
         splitter.addWidget(self.right)
 
-        splitter.setSizes([25, 50, 25])
+        splitter.setSizes([2, 7, 1])
 
         self.layout().addWidget(splitter)
 

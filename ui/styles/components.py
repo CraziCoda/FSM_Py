@@ -85,3 +85,23 @@ QToolButton {
 
 QToolButton::menu-indicator { image: none; }
 """
+
+controls_group_box_style = """
+QGroupBox {
+    padding-left: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+}
+"""
+
+control_buttons_style = """
+QToolButton {
+    background-color: transparent;
+    border: 1px solid #aaaacc;
+    padding: 2px;
+    margin-left: 5px;
+}
+"""

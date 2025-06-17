@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QPushButton
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QFrame, QLabel, QScrollArea, QToolButton, QGroupBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
+from ui.styles.components import *
 
 class SimulationWin(QWidget):
     def __init__(self):
@@ -14,79 +15,120 @@ class SimulationWin(QWidget):
         vLayout.setSpacing(0)
         self.setLayout(vLayout)
 
-        # Header
-        header_frame = QFrame()
-        header_layout = QHBoxLayout()
-        header_layout.setContentsMargins(0, 0, 0, 0)
-        header_layout.setSpacing(0)
-        header_frame.setLayout(header_layout)
+        controls_group_box = QGroupBox("Controls")
+        controls_group_box_layout = QHBoxLayout()
+        controls_group_box_layout.setContentsMargins(0, 0, 0, 0)
+        controls_group_box_layout.setSpacing(0)
+        controls_group_box.setLayout(controls_group_box_layout)
+        controls_group_box.setStyleSheet(controls_group_box_style)
+        controls_group_box_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        label_style = "margin: 5px 0; color: #888888; font-family: 'Segoe UI'; font-size: 14px; font-weight: 500;"
-
-        input_name = QLabel("Input")
-        input_name.setStyleSheet(label_style)
-
-        steps_label = QLabel("Step: 2 / 10")
-        steps_label.setStyleSheet(label_style)
-        steps_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-
-        header_layout.addWidget(input_name)
-        header_layout.addWidget(steps_label)
-
-        # Main
-        main_frame = QFrame()
-        main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
-        main_frame.setLayout(main_layout)
-
-
-        # output 
-        output_frame = QFrame()
-        output_layout = QHBoxLayout()
-        output_layout.setContentsMargins(0, 0, 0, 0)
-        output_layout.setSpacing(0)
-        output_frame.setLayout(output_layout)
-
-        output_label = QLabel("Output: ")
-        output_value = QLabel("Accepted")
-
-        output_label.setStyleSheet(label_style)
-        output_value.setStyleSheet(label_style + " color: #000000;")
-
-        output_frame.layout().setAlignment(Qt.AlignmentFlag.AlignLeft)
-
-        output_layout.addWidget(output_label, 0)
-        output_layout.addWidget(output_value, 0)
-
-
-        # controls
-        controls_frame = QFrame()
-        controls_layout = QHBoxLayout()
-        controls_layout.setContentsMargins(0, 0, 0, 0)
-        controls_layout.setSpacing(0)
-        controls_frame.setLayout(controls_layout)
-
-        stop_button = QPushButton()
-        stop_button.setIcon(QIcon("assets/icons/stop.png"))
-
-        play_button = QPushButton()
+        play_button = QToolButton()
         play_button.setIcon(QIcon("assets/icons/play.png"))
+        play_button.clicked.connect(lambda: print("play"))
+        controls_group_box_layout.addWidget(play_button)
+        controls_group_box.setStyleSheet(control_buttons_style)
 
-        next_button = QPushButton()
-        next_button.setIcon(QIcon("assets/icons/next.png"))
+        stop_button = QToolButton()
+        stop_button.setIcon(QIcon("assets/icons/stop.png"))
+        stop_button.clicked.connect(lambda: print("stop"))
+        stop_button.setDisabled(True)
+        controls_group_box_layout.addWidget(stop_button)
+        controls_group_box.setStyleSheet(control_buttons_style)
 
-        controls_layout.addWidget(stop_button)
-        controls_layout.addWidget(play_button)
-        controls_layout.addWidget(next_button)
+        forward_button = QToolButton()
+        forward_button.setIcon(QIcon("assets/icons/next.png"))
+        forward_button.setDisabled(True)
+        forward_button.clicked.connect(lambda: print("forward"))
+        controls_group_box_layout.addWidget(forward_button)
+        controls_group_box.setStyleSheet(control_buttons_style)
+
+        start_button = QToolButton()
+        start_button.setIcon(QIcon("assets/icons/play-button.png"))
+        start_button.setText("Start Simulation")
+        start_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        start_button.clicked.connect(lambda: print("start"))
+        controls_group_box_layout.addWidget(start_button)
+        controls_group_box.setStyleSheet(control_buttons_style)
+
+        controls_group_box.setFixedHeight(50)
+
+        self.layout().addWidget(controls_group_box, 0)
+        self.layout().setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Header
+        # header_frame = QFrame()
+        # header_layout = QHBoxLayout()
+        # header_layout.setContentsMargins(0, 0, 0, 0)
+        # header_layout.setSpacing(0)
+        # header_frame.setLayout(header_layout)
+
+        # label_style = "margin: 5px 0; color: #888888; font-family: 'Segoe UI'; font-size: 14px; font-weight: 500;"
+
+        # input_name = QLabel("Input")
+        # input_name.setStyleSheet(label_style)
+
+        # steps_label = QLabel("Step: 2 / 10")
+        # steps_label.setStyleSheet(label_style)
+        # steps_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        # header_layout.addWidget(input_name)
+        # header_layout.addWidget(steps_label)
+
+        # # Main
+        # main_frame = QFrame()
+        # main_layout = QVBoxLayout()
+        # main_layout.setContentsMargins(0, 0, 0, 0)
+        # main_layout.setSpacing(0)
+        # main_frame.setLayout(main_layout)
+
+
+        # # output 
+        # output_frame = QFrame()
+        # output_layout = QHBoxLayout()
+        # output_layout.setContentsMargins(0, 0, 0, 0)
+        # output_layout.setSpacing(0)
+        # output_frame.setLayout(output_layout)
+
+        # output_label = QLabel("Output: ")
+        # output_value = QLabel("Accepted")
+
+        # output_label.setStyleSheet(label_style)
+        # output_value.setStyleSheet(label_style + " color: #000000;")
+
+        # output_frame.layout().setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        # output_layout.addWidget(output_label, 0)
+        # output_layout.addWidget(output_value, 0)
+
+
+        # # controls
+        # controls_frame = QFrame()
+        # controls_layout = QHBoxLayout()
+        # controls_layout.setContentsMargins(0, 0, 0, 0)
+        # controls_layout.setSpacing(0)
+        # controls_frame.setLayout(controls_layout)
+
+        # stop_button = QPushButton()
+        # stop_button.setIcon(QIcon("assets/icons/stop.png"))
+
+        # play_button = QPushButton()
+        # play_button.setIcon(QIcon("assets/icons/play.png"))
+
+        # next_button = QPushButton()
+        # next_button.setIcon(QIcon("assets/icons/next.png"))
+
+        # controls_layout.addWidget(stop_button)
+        # controls_layout.addWidget(play_button)
+        # controls_layout.addWidget(next_button)
 
 
 
-        main_frame.setStyleSheet("background-color: #ffffff;")
-        self.layout().addWidget(header_frame, 0)
-        self.layout().addWidget(main_frame, 1)
-        self.layout().addWidget(output_frame, 0)
-        self.layout().addWidget(controls_frame, 0)
+        # main_frame.setStyleSheet("background-color: #ffffff;")
+        # self.layout().addWidget(header_frame, 0)
+        # self.layout().addWidget(main_frame, 1)
+        # self.layout().addWidget(output_frame, 0)
+        # self.layout().addWidget(controls_frame, 0)
 
 
 
