@@ -21,6 +21,7 @@ class GraphicsInputStateItem(QGraphicsItem):
         self.text.setPos(self.width / 2 - self.text.boundingRect().width() / 2,
                          self.height / 2 - self.text.boundingRect().height() / 2)
         self.text.setDefaultTextColor(QColor("#000000"))
+        self.pen = QPen(Qt.PenStyle.SolidLine)
 
     def boundingRect(self):
         return QRectF(-self.arrow.width(), 0, self.width + self.arrow.width(), self.height)
@@ -28,7 +29,7 @@ class GraphicsInputStateItem(QGraphicsItem):
     def paint(self, painter, option, widget=...):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        painter.setPen(QPen(Qt.PenStyle.SolidLine))
+        painter.setPen(self.pen)
         painter.setBrush(QBrush(QColor("#f0f0f0")))
 
         painter.drawRoundedRect(0, 0, self.width, self.height, 10, 10)
@@ -37,11 +38,11 @@ class GraphicsInputStateItem(QGraphicsItem):
                            int(self.arrow.height() / 2) + 3, self.arrow)
 
     def markAsSelected(self):
-        # self.pen.setColor(Qt.GlobalColor.red)
+        self.pen.setColor(Qt.GlobalColor.red)
         self.update()
 
     def unmarkAsSelected(self):
-        # self.pen.setColor(Qt.GlobalColor.blue)
+        self.pen.setColor(Qt.GlobalColor.black)
         self.update()
 
 
@@ -96,6 +97,7 @@ class GraphicsAcceptedInputStateItem(QGraphicsItem):
         self.text.setPos(self.width / 2 - self.text.boundingRect().width() / 2,
                          self.height / 2 - self.text.boundingRect().height() / 2)
         self.text.setDefaultTextColor(QColor("#000000"))
+        self.pen = QPen(Qt.PenStyle.SolidLine)
 
     def boundingRect(self):
         return QRectF(-self.arrow.width(), 0, self.width + self.arrow.width(), self.height)
@@ -103,7 +105,7 @@ class GraphicsAcceptedInputStateItem(QGraphicsItem):
     def paint(self, painter, option, widget=...):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        painter.setPen(QPen(Qt.PenStyle.SolidLine))
+        painter.setPen(self.pen)
         painter.setBrush(QBrush(QColor("#f0f0f0")))
 
         painter.drawRoundedRect(0, 0, self.width, self.height, 10, 10)
@@ -112,17 +114,17 @@ class GraphicsAcceptedInputStateItem(QGraphicsItem):
                            int(self.arrow.height() / 2) + 3, self.arrow)
 
         # inner rect
-        painter.setPen(QPen(Qt.PenStyle.SolidLine))
+        painter.setPen(self.pen)
         painter.setBrush(QBrush(QColor("#f0f0f0")))
         painter.drawRoundedRect(5, 5, self.width - 10,
                                 self.height - 10, 10, 10)
 
     def markAsSelected(self):
-        # self.pen.setColor(Qt.GlobalColor.red)
+        self.pen.setColor(Qt.GlobalColor.red)
         self.update()
 
     def unmarkAsSelected(self):
-        # self.pen.setColor(Qt.GlobalColor.blue)
+        self.pen.setColor(Qt.GlobalColor.black)
         self.update()
 
 
@@ -138,6 +140,7 @@ class GraphicsOutputStateItem(QGraphicsItem):
         self.text.setPos(self.width / 2 - self.text.boundingRect().width() / 2,
                          self.height / 2 - self.text.boundingRect().height() / 2)
         self.text.setDefaultTextColor(QColor("#000000"))
+        self.pen = QPen(Qt.PenStyle.SolidLine)
 
     def boundingRect(self):
         return QRectF(0, 0, self.width, self.height)
@@ -146,23 +149,23 @@ class GraphicsOutputStateItem(QGraphicsItem):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # outer rect
-        painter.setPen(QPen(Qt.PenStyle.SolidLine))
+        painter.setPen(self.pen)
         painter.setBrush(QBrush(QColor("#f0f0f0")))
 
         painter.drawRoundedRect(0, 0, self.width, self.height, 10, 10)
 
         # inner rect
-        painter.setPen(QPen(Qt.PenStyle.SolidLine))
+        painter.setPen(self.pen)
         painter.setBrush(QBrush(QColor("#f0f0f0")))
         painter.drawRoundedRect(5, 5, self.width - 10,
                                 self.height - 10, 10, 10)
 
     def markAsSelected(self):
-        # self.pen.setColor(Qt.GlobalColor.red)
+        self.pen.setColor(Qt.GlobalColor.red)
         self.update()
 
     def unmarkAsSelected(self):
-        # self.pen.setColor(Qt.GlobalColor.blue)
+        self.pen.setColor(Qt.GlobalColor.black)
         self.update()
 
 
