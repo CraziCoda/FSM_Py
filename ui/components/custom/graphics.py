@@ -36,6 +36,14 @@ class GraphicsInputStateItem(QGraphicsItem):
         painter.drawPixmap(-self.arrow.width(),
                            int(self.arrow.height() / 2) + 3, self.arrow)
 
+    def markAsSelected(self):
+        # self.pen.setColor(Qt.GlobalColor.red)
+        self.update()
+
+    def unmarkAsSelected(self):
+        # self.pen.setColor(Qt.GlobalColor.blue)
+        self.update()
+
 
 class GraphicsNormalStateItem(QGraphicsItem):
     def __init__(self, label: str = "", parent=None):
@@ -50,16 +58,27 @@ class GraphicsNormalStateItem(QGraphicsItem):
                          self.height / 2 - self.text.boundingRect().height() / 2)
         self.text.setDefaultTextColor(QColor("#000000"))
 
+        self.pen = QPen(Qt.PenStyle.SolidLine)
+
     def boundingRect(self):
         return QRectF(0, 0, self.width, self.height)
 
     def paint(self, painter, option, widget=...):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        painter.setPen(QPen(Qt.PenStyle.SolidLine))
+        painter.setPen(self.pen)
         painter.setBrush(QBrush(QColor("#f0f0f0")))
 
         painter.drawRoundedRect(0, 0, self.width, self.height, 10, 10)
+
+    def markAsSelected(self):
+        self.pen.setColor(Qt.GlobalColor.red)
+        self.update()
+
+    def unmarkAsSelected(self):
+        self.pen.setColor(Qt.GlobalColor.black)
+        self.update()
+
 
 class GraphicsAcceptedInputStateItem(QGraphicsItem):
     def __init__(self, label: str = "", parent=None):
@@ -91,12 +110,21 @@ class GraphicsAcceptedInputStateItem(QGraphicsItem):
 
         painter.drawPixmap(-self.arrow.width(),
                            int(self.arrow.height() / 2) + 3, self.arrow)
-        
+
         # inner rect
         painter.setPen(QPen(Qt.PenStyle.SolidLine))
         painter.setBrush(QBrush(QColor("#f0f0f0")))
         painter.drawRoundedRect(5, 5, self.width - 10,
                                 self.height - 10, 10, 10)
+
+    def markAsSelected(self):
+        # self.pen.setColor(Qt.GlobalColor.red)
+        self.update()
+
+    def unmarkAsSelected(self):
+        # self.pen.setColor(Qt.GlobalColor.blue)
+        self.update()
+
 
 class GraphicsOutputStateItem(QGraphicsItem):
     def __init__(self, label: str = "", parent=None):
@@ -128,6 +156,14 @@ class GraphicsOutputStateItem(QGraphicsItem):
         painter.setBrush(QBrush(QColor("#f0f0f0")))
         painter.drawRoundedRect(5, 5, self.width - 10,
                                 self.height - 10, 10, 10)
+
+    def markAsSelected(self):
+        # self.pen.setColor(Qt.GlobalColor.red)
+        self.update()
+
+    def unmarkAsSelected(self):
+        # self.pen.setColor(Qt.GlobalColor.blue)
+        self.update()
 
 
 class GraphicsTransitionItem(QGraphicsItem):
@@ -162,7 +198,6 @@ class GraphicsTransitionItem(QGraphicsItem):
         path.quadTo(control_point, self.target)
 
         return path.boundingRect().adjusted(-5, -5, 5, 5)
-        
 
     def paint(self, painter, option, widget=...):
         path = QPainterPath(self.source)
@@ -173,14 +208,15 @@ class GraphicsTransitionItem(QGraphicsItem):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         painter.setPen(self.pen)
-        
+
         painter.drawPath(path)
 
     def shape(self):
         stroker = QPainterPathStroker()
-        stroker.setWidth(self.pen.widthF() + 10)  # +2 to allow a bit of room for clicking
+        # +2 to allow a bit of room for clicking
+        stroker.setWidth(self.pen.widthF() + 10)
         return stroker.createStroke(self._make_path())
-    
+
     def _make_path(self):
         path = QPainterPath(self.source)
         control_point = self.find_control_point()
@@ -213,11 +249,19 @@ class GraphicsTransitionItem(QGraphicsItem):
         source_item = self.transition.source.get_drawn_item()
         target_item = self.transition.target.get_drawn_item()
 
-        try: 
+        try:
             self.source = source_item.scenePos() + QPointF(target_item.width / 2,
-                                                        target_item.height / 2)
+                                                           target_item.height / 2)
 
             self.target = target_item.scenePos() + QPointF(target_item.width / 2,
-                                                        target_item.height / 2)
+                                                           target_item.height / 2)
         except RuntimeError:
             pass
+
+    def markAsSelected(self):
+        self.pen.setColor(Qt.GlobalColor.red)
+        self.update()
+
+    def unmarkAsSelected(self):
+        self.pen.setColor(Qt.GlobalColor.blue)
+        self.update()

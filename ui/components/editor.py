@@ -165,26 +165,48 @@ class Editor(QGraphicsView):
             if state.get_drawn_item() == item:
                 return state
         return None
-    
+
     def get_transition_from_item(self, item: QGraphicsItem) -> Transition | None:
         for transition in self.current_machine.transitions:
             if transition.get_drawn_item() == item:
                 return transition
         return None
-    
+
     def remove_state(self, state: State):
         transitions = self.current_machine.transitions.copy()
 
         for transtion in transitions:
             if state in [transtion.source, transtion.target]:
-                self.current_machine.transitions.pop(self.current_machine.transitions.index(transtion))
+                self.current_machine.transitions.pop(
+                    self.current_machine.transitions.index(transtion))
 
-        try: 
-            self.current_machine.states.pop(self.current_machine.states.index(state))
+        try:
+            self.current_machine.states.pop(
+                self.current_machine.states.index(state))
         except:
             pass
 
         AppContext().save_machine()
+
+    def select_item(self, item: GraphicsInputStateItem | GraphicsAcceptedInputStateItem | GraphicsNormalStateItem | GraphicsOutputStateItem | GraphicsTransitionItem):
+        previous_item = self.current_machine.selected_item
+
+        for state in self.current_machine.states:
+            if state.get_drawn_item() == item:
+                self.current_machine.selected_item = state
+                break
+
+        for transition in self.current_machine.transitions:
+            if transition.get_drawn_item() == item:
+                self.current_machine.selected_item = transition
+                break
+
+        # print(previous_item, self.current_machine.selected_item)
+        if previous_item:
+            previous_item.get_drawn_item().unmarkAsSelected()
+
+        if item:
+            item.markAsSelected()
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -194,23 +216,29 @@ class Editor(QGraphicsView):
 
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "move":
             item = self.scene.itemAt(pos, self.scene.views()[0].transform())
+                        
+
 
             if not item or "Transition" in item.__class__.__name__:
                 self.dragged_item = None
+                self.select_item(item)
             elif item.__class__.__name__ == "QGraphicsTextItem":
                 self.setCursor(Qt.CursorShape.ClosedHandCursor)
                 self.dragged_item = item.parentItem()
                 self.drag_offset = event.screenPos() - item.parentItem().pos()
+                self.select_item(item.parentItem())
             elif item:
                 self.setCursor(Qt.CursorShape.ClosedHandCursor)
                 self.dragged_item = item
                 self.drag_offset = event.screenPos() - item.pos()
+                self.select_item(item)
             else:
                 self.dragged_item = None
 
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "add_transition":
             item = self.scene.itemAt(pos, self.scene.views()[0].transform())
             screen_pos = self.mapToScene(event.pos())
+            self.select_item(item)
 
             if self.adding_transition_line:
                 if item.__class__.__name__.startswith("Graphics") and self.starting_state_transition:
@@ -291,7 +319,6 @@ class Editor(QGraphicsView):
 
                 if state:
                     state.accepting = not state.accepting
-            
 
             AppContext().save_machine()
             self.load_machine()
@@ -308,8 +335,9 @@ class Editor(QGraphicsView):
                         .scaled(20, 20).transformed(transform, mode=Qt.TransformationMode.SmoothTransformation)
                     cursor = QCursor(pixmap, 10, 10)
                     self.setCursor(cursor)
-                    
-                    self.current_machine.transitions.pop(self.current_machine.transitions.index(transition))
+
+                    self.current_machine.transitions.pop(
+                        self.current_machine.transitions.index(transition))
                     self.scene.removeItem(item)
                     AppContext().save_machine()
                     self.load_machine()
@@ -325,11 +353,10 @@ class Editor(QGraphicsView):
                         .scaled(20, 20)
                     cursor = QCursor(pixmap, 10, 10)
                     self.setCursor(cursor)
-                    
+
                     self.remove_state(state)
                     self.load_machine()
-                    
-                    
+
     def mouseMoveEvent(self, event):
         if self.dragged_item and self.current_machine:
             pos = event.screenPos() - self.drag_offset

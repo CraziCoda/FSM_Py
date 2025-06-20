@@ -32,7 +32,7 @@ class State:
         self._handles.append(handle)
 
     def __str__(self):
-        return f"State: {self.name} at {self.location}. Is initial: {self.initial}. Is accepting: {self.accepting}"
+        return f"State: {self.name}"
 
 
 class Transition:
@@ -49,15 +49,15 @@ class Transition:
         return self._drawn_item
     
     def __str__(self):
-        return f"Transition: {self.name} from {self.source.name} to {self.target.name}"
+        return f"Transition: {self.name}"
 
 class Machine:
-
     def __init__(self, name, type, initial_state: State = None):
         self.name = name
         self._type = type
         self.states: list[State] = []
         self.transitions: list[Transition] = []
+        self.selected_item: State | Transition | None = None
 
         if initial_state:
             self.states.append(initial_state)
