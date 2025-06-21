@@ -1,10 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QTableWidget, QVBoxLayout, QTableWidgetItem
+from ui.styles.components import *
 
 class PropertiesWin(QWidget):
-    def __init__(self, props: list[dict] = []):
+    def __init__(self):
         super().__init__()
-
-        self.props = props
 
         self.init_ui()
     
@@ -14,13 +13,20 @@ class PropertiesWin(QWidget):
         vLayout.setSpacing(0)
         self.setLayout(vLayout)
 
-        table = QTableWidget(len(self.props), 2)
-        table.setHorizontalHeaderLabels(["Name", "Value"])
-        table.horizontalHeader().setStretchLastSection(True)
-        table.verticalHeader().setVisible(False)
+        self.table = QTableWidget(1, 2)
+        self.table.setAlternatingRowColors(True)
+        self.table.setHorizontalHeaderLabels(["Name", "Value"])
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.verticalHeader().setVisible(False)
+        self.table.setShowGrid(True)
+        self.table.setSelectionMode(QTableWidget.SelectionMode.NoSelection)
 
-        for i, prop in enumerate(self.props):
-            table.setItem(i, 0, QTableWidgetItem(prop["name"]))
-            table.setItem(i, 1, QTableWidgetItem(prop["value"]))
+        self.layout().addWidget(self.table, 1)
+        self.setStyleSheet(props_window_style)
 
-        self.layout().addWidget(table, 1)
+    def load_props(self, props: list[dict]):
+        self.table.setRowCount(0)
+        for prop in props:
+            self.table.insertRow(self.table.rowCount())
+            self.table.setItem(self.table.rowCount() - 1, 0, QTableWidgetItem(prop["name"]))
+            self.table.setItem(self.table.rowCount() - 1, 1, QTableWidgetItem(prop["value"], ))

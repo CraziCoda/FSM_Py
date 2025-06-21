@@ -6,6 +6,7 @@ from ui.components.properties_win import PropertiesWin
 from ui.components.simulation_win import SimulationWin
 from ui.components.logs_win import LogsWin
 from ui.components.editor import Editor, ToolBar
+from context.context import AppContext
 
 
 class TopFrame(QWidget):
@@ -38,10 +39,12 @@ class TopFrame(QWidget):
         left_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.left.setLayout(left_frame_layout)
 
-        left_frame_splitter = QSplitter(Qt.Vertical)
+        prop_win  = PropertiesWin()
+        AppContext().props_window = prop_win
+
+        left_frame_splitter = QSplitter(Qt.Orientation.Vertical)
         left_frame_splitter.addWidget(MinWindow("World Manager", WorldWin()))
-        props = [{"name": "prop1", "value": "value1"}, {"name": "prop2", "value": "value2"}]
-        left_frame_splitter.addWidget(MinWindow("Propeties", PropertiesWin(props=props)))
+        left_frame_splitter.addWidget(MinWindow("Propeties", prop_win))
         left_frame_layout.addWidget(left_frame_splitter)
 
 

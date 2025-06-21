@@ -16,6 +16,8 @@ class State:
         self.accepting = accepting
         self._handles: list[Callable[[], None]] = []
 
+        self.output: str | None = None
+
     def set_drawn_item(self, item: QGraphicsItem):
         self._drawn_item = item
 
@@ -41,6 +43,7 @@ class Transition:
         self.source: State = source
         self.target: State = target
         self.name = name
+        self.output: str | None = None
 
     def set_drawn_item(self, item: QGraphicsItem):
         self._drawn_item = item
@@ -65,8 +68,11 @@ class Machine:
     def add_state(self, state: State):
         for s in self.states:
             if s.name == state.name:
-                return QMessageBox.critical(None, "Error", f"State with name {state.name} already exists")
+                QMessageBox.critical(None, "Error", 
+                                     f"State with name {state.name} already exists")
+                return None
         self.states.append(state)
+        return State
 
     def add_transition(self, transition: Transition):
         self.transitions.append(transition)

@@ -1,10 +1,13 @@
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QWidget, QVBoxLayout, QGraphicsEllipseItem, QListWidget, QListWidgetItem, QGraphicsItem
+from PyQt5.QtWidgets import (QGraphicsView, QGraphicsScene, QGraphicsLineItem, QWidget,
+                             QVBoxLayout, QGraphicsEllipseItem, QListWidget, QListWidgetItem, QGraphicsItem,
+                             QLineEdit)
 from PyQt5.QtGui import QPainter, QPen, QIcon, QBrush, QColor, QCursor, QPixmap, QTransform
 from PyQt5.QtCore import Qt, QSize, QPoint, QLineF, QPointF
 from ui.styles.components import tools_list_style
 from context.context import AppContext
 from context.machine import *
 from ui.components.custom.graphics import *
+from ui.components.properties_win import PropertiesWin
 
 
 class Editor(QGraphicsView):
@@ -54,11 +57,11 @@ class Editor(QGraphicsView):
 
         state = State(f"q{len(self.current_machine.states)}", [x, y])
 
-        item = GraphicsNormalStateItem(state.name, self)
-        item.setPos(x - item.width / 2, y - item.height / 2)
-        self.scene.addItem(item)
-        state.set_drawn_item(item)
-        self.current_machine.add_state(state)
+        if self.current_machine.add_state(state):
+            item = GraphicsNormalStateItem(state.name, self)
+            item.setPos(x - item.width / 2, y - item.height / 2)
+            self.scene.addItem(item)
+            state.set_drawn_item(item)
 
         AppContext().save_machine()
 
@@ -159,6 +162,7 @@ class Editor(QGraphicsView):
                 if num_parallel_transitions % 2 == 0 and start_index == 0:
                     start_index += 1
         self.scene.update()
+        self.load_props_to_window()
 
     def get_state_from_item(self, item: QGraphicsItem) -> State | None:
         for state in self.current_machine.states:
@@ -188,6 +192,56 @@ class Editor(QGraphicsView):
 
         AppContext().save_machine()
 
+    def load_props_to_window(self):
+        if self.current_machine.selected_item:
+            props_win: PropertiesWin = AppContext().props_window
+
+            props = []
+
+            if self.current_machine.selected_item.__class__.__name__ == "State":
+                props.append({
+                    "name": "Name",
+                    "value": self.current_machine.selected_item.name,
+                    "type": "str"
+                })
+                props.append({
+                    "name": "Is initial",
+                    "value": str(self.current_machine.selected_item.initial),
+                    "type": "switch"
+                })
+                props.append({
+                    "name": "Is accepting",
+                    "value": str(self.current_machine.selected_item.accepting),
+                    "type": "switch"
+                })
+                props.append({
+                    "name": "Output",
+                    "value": self.current_machine.selected_item.output,
+                    "type": "str"
+                })
+            elif self.current_machine.selected_item.__class__.__name__ == "Transition":
+                props.append({
+                    "name": "Name",
+                    "value": self.current_machine.selected_item.name,
+                    "type": "str"
+                })
+                props.append({
+                    "name": "Source",
+                    "value": self.current_machine.selected_item.source.name,
+                    "type": "str"
+                })
+                props.append({
+                    "name": "Target",
+                    "value": self.current_machine.selected_item.target.name,
+                    "type": "str"
+                })
+                props.append({
+                    "name": "Output",
+                    "value": self.current_machine.selected_item.output,
+                    "type": "str"
+                })
+            props_win.load_props(props)
+
     def select_item(self, item: GraphicsInputStateItem | GraphicsAcceptedInputStateItem | GraphicsNormalStateItem | GraphicsOutputStateItem | GraphicsTransitionItem):
         previous_item = self.current_machine.selected_item
 
@@ -202,11 +256,13 @@ class Editor(QGraphicsView):
                 break
 
         # print(previous_item, self.current_machine.selected_item)
-        if previous_item:
+        if previous_item and previous_item.get_drawn_item():
             previous_item.get_drawn_item().unmarkAsSelected()
 
         if item:
             item.markAsSelected()
+
+        self.load_props_to_window()
 
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -216,8 +272,6 @@ class Editor(QGraphicsView):
 
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "move":
             item = self.scene.itemAt(pos, self.scene.views()[0].transform())
-                        
-
 
             if not item or "Transition" in item.__class__.__name__:
                 self.dragged_item = None
@@ -238,7 +292,6 @@ class Editor(QGraphicsView):
         if event.button() == Qt.MouseButton.LeftButton and AppContext().selected_tool == "add_transition":
             item = self.scene.itemAt(pos, self.scene.views()[0].transform())
             screen_pos = self.mapToScene(event.pos())
-            self.select_item(item)
 
             if self.adding_transition_line:
                 if item.__class__.__name__.startswith("Graphics") and self.starting_state_transition:

@@ -105,3 +105,36 @@ QToolButton {
     margin-left: 5px;
 }
 """
+
+props_window_style = """
+QWidget {
+    background-color: #f8f9fa;
+    font-family: Segoe UI, sans-serif;
+    font-size: 14px;
+}
+QHeaderView::section {
+    background-color: #343a40;
+    color: white;
+    padding: 8px;
+    border: none;
+    border-right: 1px solid #ced4da;
+}
+QTableWidget {
+    border: 1px solid #ced4da;
+    gridline-color: #dee2e6;
+    selection-background-color: #e9ecef;
+    alternate-background-color: #f1f3f5;
+}
+QTableWidget::item {
+    padding: 6px;
+}
+QLineEdit, QComboBox {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 4px 6px;
+    background: white;
+}
+QCheckBox {
+    margin-left: 6px;
+} 
+"""

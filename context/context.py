@@ -4,6 +4,7 @@ from PyQt5.QtCore import QFileSystemWatcher
 from typing import Callable
 from context.machine import Machine, State, Transition
 import json
+from ui.components.properties_win import PropertiesWin
 
 
 class SingletonMeta(type):
@@ -28,6 +29,10 @@ class AppContext(metaclass=SingletonMeta):
     _world_name_update_handler: Callable[[], None] = None
     _tool_change_handler: Callable[[], None] = None
     _selected_machine_change_handler: Callable[[], None] = None
+
+    def __init__(self):
+        # self.settings = QSettings("settings.json", QSettings.Format.JsonFormat)
+        self.props_window: PropertiesWin = None
 
     def set_machines(self, machines: list[str]):
         self.machines = machines
@@ -108,3 +113,5 @@ class AppContext(metaclass=SingletonMeta):
 
         with open(f"{self.settings.value('world_folder')}/{self.selected_machine.name}", "w") as f:
             f.write(json.dumps(data))
+
+        self.props_window.update()
