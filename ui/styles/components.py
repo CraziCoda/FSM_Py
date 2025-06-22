@@ -106,6 +106,54 @@ QToolButton {
 }
 """
 
+input_lable_style = """
+QLabel {
+   margin-left: 5px; 
+}
+"""
+
+input_line_edit_style = """
+QLineEdit {
+    border: 1px solid #aaaacc;
+    padding: 2px;
+    border-radius: 8px;
+}
+"""
+
+input_scroll_area_style = """
+    QScrollArea {
+        border: 1px solid #aaaacc;
+    }
+
+    QScrollArea::viewport {
+        background-color: #ffffff;
+    }
+"""
+
+save_button_style = """
+    QToolButton {
+        background-color: #0000ff;
+        color: #ffffff;
+        border: 1px solid #aaaacc;
+        border-bottom: none;
+        border-left: none;
+        padding: 2px;
+        padding-right: 5px;
+    }
+"""
+
+clear_button_style = """
+    QToolButton {
+        background-color: #ff0000;
+        color: #ffffff;
+        border: 1px solid #aaaacc;
+        border-bottom: none;
+        border-left: none;
+        padding: 2px;
+        padding-right: 5px;
+    } 
+"""
+
 props_window_style = """
 QWidget {
     background-color: #f8f9fa;

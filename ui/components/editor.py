@@ -243,6 +243,8 @@ class Editor(QGraphicsView):
             props_win.load_props(props)
 
     def select_item(self, item: GraphicsInputStateItem | GraphicsAcceptedInputStateItem | GraphicsNormalStateItem | GraphicsOutputStateItem | GraphicsTransitionItem):
+        if not self.current_machine:
+            return
         previous_item = self.current_machine.selected_item
 
         for state in self.current_machine.states:
