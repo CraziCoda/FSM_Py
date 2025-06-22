@@ -74,9 +74,9 @@ class TopFrame(QWidget):
         splitter.addWidget(self.main)
         splitter.addWidget(self.right)
 
-        splitter.setSizes([2, 7, 1])
-
         self.layout().addWidget(splitter)
+        splitter.setSizes([20, 60, 20])
+
 
 
 class BottomFrame(QWidget):

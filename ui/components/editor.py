@@ -8,7 +8,7 @@ from context.context import AppContext
 from context.machine import *
 from ui.components.custom.graphics import *
 from ui.components.properties_win import PropertiesWin
-
+from ui.components.popups.obj_props import *
 
 class Editor(QGraphicsView):
     current_machine: Machine = None
@@ -445,6 +445,24 @@ class Editor(QGraphicsView):
             return
 
         return super().wheelEvent(event)
+    
+
+    def mouseDoubleClickEvent(self, event):
+        pos = self.mapToScene(event.pos())
+        item = self.scene.itemAt(pos, self.scene.views()[0].transform())
+        main_window = AppContext().main_window
+
+        if item.__class__.__name__.startswith("Graphics"):
+            state = self.get_state_from_item(item)
+            if state:
+                popup = StatePropertiesPopup(main_window)
+                popup.exec()
+
+        elif item.__class__.__name__ == "QGraphicsTextItem":
+            state = self.get_state_from_item(item.parentItem())
+
+            if state:
+                pass
 
 
 class ToolBar(QWidget):
