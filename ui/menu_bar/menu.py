@@ -21,4 +21,12 @@ class Menu:
         exit_action.triggered.connect(parent.close)
         file_menu.addAction(exit_action)
 
+        view_menu = self.menu_bar.addMenu("View")
 
+        simulation_menu = self.menu_bar.addMenu("Simulation")
+
+        ai_menu = self.menu_bar.addMenu("AI")
+
+        settings_menu = self.menu_bar.addMenu("Settings")
+
+        help_menu = self.menu_bar.addMenu("Help")

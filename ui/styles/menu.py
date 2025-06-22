@@ -14,6 +14,7 @@ QMenuBar::item {
     font-size: 14px;
     text-align: center;
     margin: 5px 0;
+    margin-right: 10px;
 }
 
 QMenuBar::item:selected {
